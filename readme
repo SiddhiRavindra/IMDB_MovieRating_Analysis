@@ -1,0 +1,8 @@
+IMDb Project :
+1.Data Profiling Alteryx.
+2.Data Cleaning - Basic Data cleaning in Alteryx and then ADF for advance cleaning.
+3.Connecting to snowflake to store dimensional data.
+4.ER Design for designing star schema.
+5.Executing SQL scripts in Dbeaver connected to snowflake for creating dimensional schema to address business requirements for IMDb webiste.
+6.Loading Data into stage and dimensional tables using ADF pipeline.
+7.Designing Power BI Dashboard for analysis purposes.   
