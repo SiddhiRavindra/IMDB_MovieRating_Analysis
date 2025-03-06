@@ -120,10 +120,7 @@
 						"type": "DataFlowReference"
 					},
 					"staging": {
-						"linkedService": {
-							"referenceName": "AzureBlobStorageForSnowflake",
-							"type": "LinkedServiceReference"
-						}
+						"folderPath": ""
 					},
 					"compute": {
 						"coreCount": 8,

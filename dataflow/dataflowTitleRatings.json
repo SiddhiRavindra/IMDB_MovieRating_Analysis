@@ -45,9 +45,9 @@
 				"source derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumnTitleRatings",
 				"derivedColumnTitleRatings select(mapColumn(",
-				"          tconst,",
-				"          averageRating,",
-				"          numVotes,",
+				"          TCONST = tconst,",
+				"          AVERAGERATING = averageRating,",
+				"          NUMVOTES = numVotes,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DT",
 				"     ),",
@@ -71,11 +71,11 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     stageInsert: true,",
 				"     mapColumn(",
-				"          tconst,",
-				"          averageRating,",
-				"          numVotes,",
+				"          TCONST,",
+				"          AVERAGERATING,",
+				"          NUMVOTES,",
 				"          DI_JOB_ID,",
-				"          DI_LOAD_DT",
+				"          DI_LOAD_DATE = DI_LOAD_DT",
 				"     )) ~> sinkTitleRatings"
 			]
 		}
