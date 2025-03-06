@@ -105,6 +105,8 @@
 			{
 				"name": "Dataflow_titleRatings",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.00:30:00",
@@ -117,10 +119,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowTitleRatings",
-						"type": "DataFlowReference"
-					},
-					"staging": {
-						"folderPath": ""
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -130,7 +132,7 @@
 				}
 			},
 			{
-				"name": "Dataflow",
+				"name": "Dataflow_title_episode",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -144,6 +146,32 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflow_titleCrew",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Dataflowtitleakas",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:30:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "dataflowtitleakas",
 						"type": "DataFlowReference"
 					},
 					"compute": {
