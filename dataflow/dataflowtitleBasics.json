@@ -56,7 +56,7 @@
 				"     stepValue: 1L,",
 				"     partitionBy('hash', 1)) ~> surrogateKeytitleBasics",
 				"surrogateKeytitleBasics derive(DI_JOB_ID = $jobid,",
-				"          DI_LOAD_DT = currentTimeStamp(),",
+				"          DI_LOAD_DT = currentTimestamp(),",
 				"     partitionBy('hash', 1)) ~> derivedColumnTitleBasics",
 				"derivedColumnTitleBasics select(mapColumn(",
 				"          TCONST = tconst,",
