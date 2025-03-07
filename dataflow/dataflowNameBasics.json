@@ -27,6 +27,9 @@
 				},
 				{
 					"name": "derivedColumn"
+				},
+				{
+					"name": "sort"
 				}
 			],
 			"scriptLines": [
@@ -45,11 +48,11 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> sourceNameBasics",
-				"derivedColumn foldDown(unrollMultiple(KNOWFORTITLES,primaryProfession),",
+				"derivedColumn foldDown(unrollMultiple(primaryProfession,KNOWNFORTITLES),",
 				"     mapColumn(",
 				"          PRIMARYPROFESSION = primaryProfession,",
 				"          NCONST = nconst,",
-				"          KNOWFORTITLES,",
+				"          KNOWNFORTITLES = derivedColumn@KNOWNFORTITLES,",
 				"          PRIMARYNAME = primaryName,",
 				"          BIRTHYEAR = birthYear,",
 				"          DEATHYEAR = deathYear,",
@@ -60,13 +63,14 @@
 				"     skipDuplicateMapOutputs: false) ~> flatten",
 				"sourceNameBasics derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DT = currentTimestamp(),",
-				"          KNOWFORTITLES = split(knownForTitles,','),",
+				"          KNOWNFORTITLES = split(knownForTitles,','),",
 				"          primaryName = primaryName,",
 				"          primaryProfession = split(primaryProfession,','),",
 				"          nconst = nconst,",
 				"          birthYear = birthYear,",
 				"          deathYear = deathYear) ~> derivedColumn",
-				"flatten sink(allowSchemaDrift: true,",
+				"flatten sort(asc(NCONST, false)) ~> sort",
+				"sort sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          NCONST as string,",
@@ -82,10 +86,19 @@
 				"     insertable:true,",
 				"     updateable:false,",
 				"     upsertable:false,",
+				"     truncate:true,",
 				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     stageInsert: true) ~> sinknamebasics"
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          NCONST,",
+				"          PRIMARYNAME,",
+				"          BIRTHYEAR,",
+				"          DEATHYEAR,",
+				"          PRIMARYPROFESSION,",
+				"          KNOWNFORTITLES,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE = DI_LOAD_DT",
+				"     )) ~> sinknamebasics"
 			]
 		}
 	}

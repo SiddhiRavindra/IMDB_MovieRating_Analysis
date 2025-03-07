@@ -256,7 +256,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowNameBasics",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -282,6 +285,30 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowtitleCrew",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Dataflowtitle_crew",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:30:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "titlecrew",
 						"type": "DataFlowReference"
 					},
 					"compute": {
