@@ -1,0 +1,103 @@
+{
+	"name": "dataflowtitlePrincipals",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Parquet_title_principal",
+						"type": "DatasetReference"
+					},
+					"name": "sourcetitlePrincipals"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableTitlePrincipals",
+						"type": "DatasetReference"
+					},
+					"name": "sinktitleprincipals"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKey"
+				},
+				{
+					"name": "derivedColumnPrincipals"
+				},
+				{
+					"name": "select"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jobid as string (uuid())",
+				"}",
+				"source(output(",
+				"          tconst as string,",
+				"          ordering as long,",
+				"          nconst as string,",
+				"          category as string,",
+				"          job as string,",
+				"          characters as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourcetitlePrincipals",
+				"sourcetitlePrincipals keyGenerate(output(RowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"surrogateKey derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumnPrincipals",
+				"derivedColumnPrincipals select(mapColumn(",
+				"          TCONST = tconst,",
+				"          ORDERING = ordering,",
+				"          NCONST = nconst,",
+				"          CATEGORY = category,",
+				"          JOB = job,",
+				"          CHARACTERS = characters,",
+				"          TITLE_PRINCIPALS_SK = RowNum,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TITLE_PRINCIPALS_SK as decimal(10,0),",
+				"          TCONST as string,",
+				"          ORDERING as decimal(38,0),",
+				"          NCONST as string,",
+				"          CATEGORY as string,",
+				"          JOB as string,",
+				"          CHARACTERS as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          TITLE_PRINCIPALS_SK,",
+				"          TCONST,",
+				"          ORDERING,",
+				"          NCONST,",
+				"          CATEGORY,",
+				"          JOB,",
+				"          CHARACTERS,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE = DI_LOAD_DT",
+				"     )) ~> sinktitleprincipals"
+			]
+		}
+	}
+}
