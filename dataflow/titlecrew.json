@@ -1,0 +1,90 @@
+{
+	"name": "titlecrew",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ParquetTitleCrew",
+						"type": "DatasetReference"
+					},
+					"name": "sourcetitleCrew"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTable",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn"
+				},
+				{
+					"name": "flatten1"
+				},
+				{
+					"name": "sort"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jobid as string (uuid())",
+				"}",
+				"source(output(",
+				"          tconst as string,",
+				"          directors as string,",
+				"          writers as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> sourcetitleCrew",
+				"sourcetitleCrew derive(DI_LOAD_DT = currentTimestamp(),",
+				"          DI_JOB_ID = $jobid,",
+				"          directors = split(directors,','),",
+				"          writers = split(writers,','),",
+				"          tconst = tconst) ~> derivedColumn",
+				"derivedColumn foldDown(unrollMultiple(directors,writers),",
+				"     mapColumn(",
+				"          TCONST = tconst,",
+				"          DIRECTORS = directors,",
+				"          WRITERS = writers,",
+				"          DI_LOAD_DT,",
+				"          DI_JOB_ID",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"flatten1 sort(asc(TCONST, true)) ~> sort",
+				"sort sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TCONST as string,",
+				"          DIRECTORS as string,",
+				"          WRITERS as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          TCONST,",
+				"          DIRECTORS,",
+				"          WRITERS,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE = DI_LOAD_DT",
+				"     )) ~> sink"
+			]
+		}
+	}
+}
