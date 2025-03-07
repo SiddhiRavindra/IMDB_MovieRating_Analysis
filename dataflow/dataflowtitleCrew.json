@@ -1,0 +1,19 @@
+{
+	"name": "dataflowtitleCrew",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "sourcetitleCrew"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> sourcetitleCrew"
+			]
+		}
+	}
+}
