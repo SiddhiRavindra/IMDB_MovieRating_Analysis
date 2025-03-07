@@ -72,6 +72,7 @@
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DT",
 				"     ),",
+				"     partitionBy('hash', 1),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> selecttitleBasics",
 				"selecttitleBasics sink(allowSchemaDrift: true,",
