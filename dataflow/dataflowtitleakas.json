@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Parquet_TitleAkas",
+						"referenceName": "TitleAkasParquet",
 						"type": "DatasetReference"
 					},
 					"name": "sourcetitleakas"
@@ -22,9 +22,6 @@
 				}
 			],
 			"transformations": [
-				{
-					"name": "surrogateKeytitleakas"
-				},
 				{
 					"name": "derivedColumntitleAkas"
 				},
@@ -51,13 +48,8 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> sourcetitleakas",
-				"sourcetitleakas keyGenerate(output(title_akas as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L,",
-				"     partitionBy('hash', 1)) ~> surrogateKeytitleakas",
-				"surrogateKeytitleakas derive(DI_JOB_ID = $jobid,",
-				"          DI_LOAD_DT = currentTimestamp(),",
-				"          rownum = title_akas+1) ~> derivedColumntitleAkas",
+				"sourcetitleakas derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumntitleAkas",
 				"derivedColumntitleAkas select(mapColumn(",
 				"          TITLEID = titleId,",
 				"          ORDERING = ordering,",
@@ -68,7 +60,6 @@
 				"          ATTRIBUTES = attributes,",
 				"          ISORIGINALTITLE = isOriginalTitle,",
 				"          FILENAME = FileName,",
-				"          TITLE_AKAS = rownum,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DT",
 				"     ),",
@@ -77,7 +68,6 @@
 				"selecttitleAkas sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          TITLE_AKAS_SK as decimal(10,0),",
 				"          TITLEID as string,",
 				"          ORDERING as decimal(38,0),",
 				"          TITLE as string,",
@@ -98,7 +88,6 @@
 				"     format: 'table',",
 				"     stageInsert: true,",
 				"     mapColumn(",
-				"          TITLE_AKAS_SK = TITLE_AKAS,",
 				"          TITLEID,",
 				"          ORDERING,",
 				"          TITLE,",

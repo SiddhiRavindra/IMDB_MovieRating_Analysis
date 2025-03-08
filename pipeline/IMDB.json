@@ -134,6 +134,8 @@
 			{
 				"name": "Dataflow_title_episode",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.00:30:00",
@@ -161,8 +163,6 @@
 			{
 				"name": "Dataflowtitleakas",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.00:30:00",
@@ -204,7 +204,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowtitleBasics",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,

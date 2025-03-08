@@ -1,0 +1,57 @@
+{
+	"name": "TitleBasicsParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IMDBDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "titlebasicsp_parquet.parquet",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "tconst",
+				"type": "UTF8"
+			},
+			{
+				"name": "titleType",
+				"type": "UTF8"
+			},
+			{
+				"name": "primaryTitle",
+				"type": "UTF8"
+			},
+			{
+				"name": "originalTitle",
+				"type": "UTF8"
+			},
+			{
+				"name": "isAdult",
+				"type": "INT64"
+			},
+			{
+				"name": "startYear",
+				"type": "INT64"
+			},
+			{
+				"name": "endYear",
+				"type": "INT64"
+			},
+			{
+				"name": "runtimeMinutes",
+				"type": "INT64"
+			},
+			{
+				"name": "genres",
+				"type": "UTF8"
+			}
+		]
+	}
+}

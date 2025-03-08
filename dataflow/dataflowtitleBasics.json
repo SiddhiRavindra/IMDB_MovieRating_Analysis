@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ParquetTitle_basics",
+						"referenceName": "TitleBasicsParquet",
 						"type": "DatasetReference"
 					},
 					"name": "sourcetitlebasics"
@@ -22,9 +22,6 @@
 				}
 			],
 			"transformations": [
-				{
-					"name": "surrogateKeytitleBasics"
-				},
 				{
 					"name": "derivedColumnTitleBasics"
 				},
@@ -51,11 +48,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> sourcetitlebasics",
-				"sourcetitlebasics keyGenerate(output(title_basics as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L,",
-				"     partitionBy('hash', 1)) ~> surrogateKeytitleBasics",
-				"surrogateKeytitleBasics derive(DI_JOB_ID = $jobid,",
+				"sourcetitlebasics derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DT = currentTimestamp(),",
 				"     partitionBy('hash', 1)) ~> derivedColumnTitleBasics",
 				"derivedColumnTitleBasics select(mapColumn(",
@@ -68,7 +61,6 @@
 				"          ENDYEAR = endYear,",
 				"          RUNTIMEMINUTES = runtimeMinutes,",
 				"          GENRES = genres,",
-				"          TITLE_BASICS = title_basics,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DT",
 				"     ),",
@@ -78,7 +70,6 @@
 				"selecttitleBasics sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          TITLE_BASICS_SK as decimal(10,0),",
 				"          TCONST as string,",
 				"          TITLETYPE as string,",
 				"          PRIMARYTITLE as string,",
@@ -99,7 +90,6 @@
 				"     format: 'table',",
 				"     stageInsert: true,",
 				"     mapColumn(",
-				"          TITLE_BASICS_SK = TITLE_BASICS,",
 				"          TCONST,",
 				"          TITLETYPE,",
 				"          PRIMARYTITLE,",
