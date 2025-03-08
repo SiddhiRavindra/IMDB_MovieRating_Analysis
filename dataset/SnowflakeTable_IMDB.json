@@ -9,6 +9,12 @@
 		"type": "SnowflakeV2Table",
 		"schema": [
 			{
+				"name": "TITLE_RATING_SK",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
 				"name": "TCONST",
 				"type": "VARCHAR"
 			},

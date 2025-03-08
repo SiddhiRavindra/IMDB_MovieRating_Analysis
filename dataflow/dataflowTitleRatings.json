@@ -56,6 +56,7 @@
 				"selecttitleRatings sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
+				"          TITLE_RATING_SK as decimal(38,0),",
 				"          TCONST as string,",
 				"          AVERAGERATING as double,",
 				"          NUMVOTES as decimal(38,0),",
