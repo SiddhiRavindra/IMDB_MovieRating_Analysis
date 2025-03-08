@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "Parquet_title_principal",
+						"referenceName": "TitlePrincipalsParquet",
 						"type": "DatasetReference"
 					},
 					"name": "sourcetitlePrincipals"
@@ -22,9 +22,6 @@
 				}
 			],
 			"transformations": [
-				{
-					"name": "surrogateKey"
-				},
 				{
 					"name": "derivedColumnPrincipals"
 				},
@@ -48,10 +45,7 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     format: 'parquet') ~> sourcetitlePrincipals",
-				"sourcetitlePrincipals keyGenerate(output(RowNum as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey",
-				"surrogateKey derive(DI_JOB_ID = $jobid,",
+				"sourcetitlePrincipals derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumnPrincipals",
 				"derivedColumnPrincipals select(mapColumn(",
 				"          TCONST = tconst,",
@@ -60,7 +54,6 @@
 				"          CATEGORY = category,",
 				"          JOB = job,",
 				"          CHARACTERS = characters,",
-				"          TITLE_PRINCIPALS_SK = RowNum,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DT",
 				"     ),",
@@ -69,7 +62,6 @@
 				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          TITLE_PRINCIPALS_SK as decimal(10,0),",
 				"          TCONST as string,",
 				"          ORDERING as decimal(38,0),",
 				"          NCONST as string,",
@@ -87,7 +79,6 @@
 				"     format: 'table',",
 				"     stageInsert: true,",
 				"     mapColumn(",
-				"          TITLE_PRINCIPALS_SK,",
 				"          TCONST,",
 				"          ORDERING,",
 				"          NCONST,",
