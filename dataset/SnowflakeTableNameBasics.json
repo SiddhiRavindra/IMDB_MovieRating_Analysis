@@ -9,6 +9,12 @@
 		"type": "SnowflakeV2Table",
 		"schema": [
 			{
+				"name": "NAME_BASICS_SK",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
 				"name": "NCONST",
 				"type": "VARCHAR"
 			},

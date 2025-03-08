@@ -73,6 +73,7 @@
 				"sort sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
+				"          NAME_BASICS_SK as decimal(38,0),",
 				"          NCONST as string,",
 				"          PRIMARYNAME as string,",
 				"          BIRTHYEAR as decimal(38,0),",
