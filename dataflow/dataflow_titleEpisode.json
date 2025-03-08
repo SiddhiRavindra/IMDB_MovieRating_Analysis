@@ -1,5 +1,5 @@
 {
-	"name": "dataflow_titleCrew",
+	"name": "dataflow_titleEpisode",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
