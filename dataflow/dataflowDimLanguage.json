@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTableDIMlanguage",
+						"referenceName": "SnowflakeTable_NewDIMlanguage",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
@@ -68,7 +68,8 @@
 				"          LANGUAGE_CODE as string,",
 				"          LANGUAGE_NAME as string,",
 				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date",
+				"          DI_LOAD_DATE as date,",
+				"          ENDONYM as string",
 				"     ),",
 				"     deletable:false,",
 				"     insertable:true,",
