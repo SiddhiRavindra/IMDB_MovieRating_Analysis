@@ -1,0 +1,33 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeFactEpisode",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          FACT_EPISODE_SK as decimal(0,0),",
+				"          DATE_SK as decimal(0,0),",
+				"          MOVIE_SK as decimal(10,0),",
+				"          EPISODENUMBER as decimal(38,0),",
+				"          SEASONNUMBER as decimal(38,0),",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> source"
+			]
+		}
+	}
+}
