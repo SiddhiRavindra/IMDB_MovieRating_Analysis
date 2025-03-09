@@ -10,12 +10,32 @@
 						"type": "DatasetReference"
 					},
 					"name": "source"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeDimMovie",
+						"type": "DatasetReference"
+					},
+					"name": "sourceDimMovie"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableDIMDate",
+						"type": "DatasetReference"
+					},
+					"name": "sourceDimDate"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
 					"name": "surrogateKey1"
+				},
+				{
+					"name": "joinDimMovie"
+				},
+				{
+					"name": "joinDimDate"
 				}
 			],
 			"scriptLines": [
@@ -30,9 +50,50 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> source",
+				"source(output(",
+				"          MOVIE_SK as decimal(10,0),",
+				"          TCONST as string,",
+				"          START_DATE_ID as date,",
+				"          END_DATE_ID as date,",
+				"          TITLETYPE as string,",
+				"          PRIMARYTITLE as string,",
+				"          ORIGINALTITLE as string,",
+				"          ISADULT as string,",
+				"          STARTYEAR as decimal(38,0),",
+				"          ENDYEAR as decimal(38,0),",
+				"          RUNTIMEMINUTES as decimal(38,0),",
+				"          GENRES as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceDimMovie",
+				"source(output(",
+				"          DATE_SK as decimal(0,0),",
+				"          DATE as date,",
+				"          YEAR as decimal(38,0),",
+				"          MONTH as decimal(38,0),",
+				"          DAY_OF_WEEK as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceDimDate",
 				"source keyGenerate(output(fact_episode_SK as long),",
 				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey1"
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1, sourceDimMovie join(source@TCONST == sourceDimMovie@TCONST,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinDimMovie",
+				"joinDimMovie, sourceDimDate join(STARTYEAR == YEAR,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinDimDate"
 			]
 		}
 	}
