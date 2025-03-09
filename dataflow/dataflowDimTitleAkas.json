@@ -17,6 +17,16 @@
 						"type": "DatasetReference"
 					},
 					"name": "sourceDimCountry"
+				},
+				{
+					"name": "sourceDimLaanguage"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableDIMmovie",
+						"type": "DatasetReference"
+					},
+					"name": "sourceDimMovie"
 				}
 			],
 			"sinks": [
@@ -37,6 +47,9 @@
 				},
 				{
 					"name": "join"
+				},
+				{
+					"name": "joinLanguage"
 				}
 			],
 			"scriptLines": [
@@ -70,7 +83,28 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourceDimCountry",
-				"join derive(DI_JOB_ID = $jobid,",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> sourceDimLaanguage",
+				"source(output(",
+				"          MOVIE_SK as decimal(10,0),",
+				"          TCONST as string,",
+				"          START_DATE_ID as date,",
+				"          END_DATE_ID as date,",
+				"          TITLETYPE as string,",
+				"          PRIMARYTITLE as string,",
+				"          ORIGINALTITLE as string,",
+				"          ISADULT as string,",
+				"          STARTYEAR as decimal(38,0),",
+				"          ENDYEAR as decimal(38,0),",
+				"          RUNTIMEMINUTES as decimal(38,0),",
+				"          GENRES as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceDimMovie",
+				"joinLanguage derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp(),",
 				"          rownum = rownum) ~> derivedColumn1",
 				"derivedColumn1 select(mapColumn(",
@@ -94,6 +128,11 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join",
+				"join, sourceDimLaanguage join(LANGUAGE == ERROR_FUNCTION(''),",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinLanguage",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
