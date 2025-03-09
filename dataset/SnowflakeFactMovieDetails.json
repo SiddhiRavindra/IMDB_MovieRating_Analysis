@@ -1,0 +1,87 @@
+{
+	"name": "SnowflakeFactMovieDetails",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Snowflake_IMDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [
+			{
+				"name": "FACT_MOVIE_SK",
+				"type": "NUMBER",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "DATE_SK",
+				"type": "NUMBER",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "TITLE_AKAS_SK",
+				"type": "NUMBER",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "COUNTRY_CODE_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "ISO_LANGUAGE_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "PERSON_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "MOVIE_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "AVERAGERATING",
+				"type": "FLOAT"
+			},
+			{
+				"name": "NUMVOTES",
+				"type": "BINARY"
+			},
+			{
+				"name": "CATEGORY",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "JOB",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "CHARACTERS",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DI_JOB_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DI_LOAD_DATE",
+				"type": "DATE"
+			}
+		],
+		"typeProperties": {
+			"schema": "IMDB_SCHEMA",
+			"table": "FACTMOVIEDETAILS"
+		}
+	}
+}

@@ -1,0 +1,40 @@
+{
+	"name": "dataflowfactMovieDetails",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeFactMovieDetails",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          FACT_MOVIE_SK as decimal(0,0),",
+				"          DATE_SK as decimal(0,0),",
+				"          TITLE_AKAS_SK as decimal(0,0),",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          PERSON_SK as decimal(10,0),",
+				"          MOVIE_SK as decimal(10,0),",
+				"          AVERAGERATING as double,",
+				"          NUMVOTES as binary,",
+				"          CATEGORY as string,",
+				"          JOB as string,",
+				"          CHARACTERS as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> source"
+			]
+		}
+	}
+}
