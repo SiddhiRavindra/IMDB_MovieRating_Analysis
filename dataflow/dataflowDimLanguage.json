@@ -14,6 +14,10 @@
 			],
 			"sinks": [
 				{
+					"dataset": {
+						"referenceName": "SnowflakeTableDIMlanguage",
+						"type": "DatasetReference"
+					},
 					"name": "sink1"
 				}
 			],
@@ -22,10 +26,10 @@
 					"name": "surrogateKey"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "derivedColumn"
 				},
 				{
-					"name": "select1"
+					"name": "select"
 				}
 			],
 			"scriptLines": [
@@ -46,21 +50,41 @@
 				"     stepValue: 1L) ~> surrogateKey",
 				"surrogateKey derive(rownum = rownum,",
 				"          DI_JOB_ID = $jobid,",
-				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
-				"          language_name,",
-				"          Endonym,",
-				"          language_code,",
-				"          rownum,",
+				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn",
+				"derivedColumn select(mapColumn(",
+				"          LANGUAGE_NAME = language_name,",
+				"          ENDONYM = Endonym,",
+				"          LANGUAGE_CODE = language_code,",
+				"          ROWNUM = rownum,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE",
 				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select",
+				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     input(",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          LANGUAGE_CODE as string,",
+				"          LANGUAGE_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          ISO_LANGUAGE_SK = ROWNUM,",
+				"          LANGUAGE_CODE,",
+				"          LANGUAGE_NAME,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE,",
+				"          ENDONYM",
+				"     )) ~> sink1"
 			]
 		}
 	}
