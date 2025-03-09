@@ -102,7 +102,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflow1",
+						"referenceName": "dataflowDimMovie",
 						"type": "DataFlowReference"
 					},
 					"compute": {

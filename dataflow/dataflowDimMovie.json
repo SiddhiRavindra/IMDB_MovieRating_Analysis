@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "dataflowDimMovie",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
