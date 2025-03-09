@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "SnowflakeFactEpisode",
+						"referenceName": "SnowflakeTable_title_episode",
 						"type": "DatasetReference"
 					},
 					"name": "source"
@@ -16,11 +16,10 @@
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
-				"          FACT_EPISODE_SK as decimal(0,0),",
-				"          DATE_SK as decimal(0,0),",
-				"          MOVIE_SK as decimal(10,0),",
-				"          EPISODENUMBER as decimal(38,0),",
+				"          TCONST as string,",
+				"          PARENTTCONST as string,",
 				"          SEASONNUMBER as decimal(38,0),",
+				"          EPISODENUMBER as decimal(38,0),",
 				"          DI_JOB_ID as string,",
 				"          DI_LOAD_DATE as date",
 				"     ),",
