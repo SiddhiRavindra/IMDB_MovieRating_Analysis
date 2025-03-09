@@ -55,7 +55,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowDimPerson",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -96,6 +99,8 @@
 			{
 				"name": "DIMMOVIE",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -123,8 +128,6 @@
 			{
 				"name": "DIM_TITLE_AKAS",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -137,7 +140,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowDimTitleAkas",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -149,8 +155,6 @@
 			{
 				"name": "FCAT_MOVIEDETAILS",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -175,8 +179,6 @@
 			{
 				"name": "FACT_EPISODE",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
