@@ -23,7 +23,7 @@
 						"referenceName": "SnowflakeTable_NewDIMlanguage",
 						"type": "DatasetReference"
 					},
-					"name": "sourceDimLaanguage"
+					"name": "sourceDimLanguage"
 				},
 				{
 					"dataset": {
@@ -39,21 +39,27 @@
 						"referenceName": "SnowflakeTableDIMtitleakas",
 						"type": "DatasetReference"
 					},
-					"name": "sink1"
+					"name": "sink"
 				}
 			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "derivedColumn"
 				},
 				{
-					"name": "select1"
+					"name": "select"
 				},
 				{
-					"name": "join"
+					"name": "joinCountry"
 				},
 				{
 					"name": "joinLanguage"
+				},
+				{
+					"name": "joinMovie"
+				},
+				{
+					"name": "surrogateKey"
 				}
 			],
 			"scriptLines": [
@@ -97,7 +103,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimLaanguage",
+				"     format: 'table') ~> sourceDimLanguage",
 				"source(output(",
 				"          MOVIE_SK as decimal(10,0),",
 				"          TCONST as string,",
@@ -117,10 +123,10 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourceDimMovie",
-				"joinLanguage derive(DI_JOB_ID = $jobid,",
+				"joinMovie derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp(),",
-				"          rownum = rownum) ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
+				"          RowNum = RowNum) ~> derivedColumn",
+				"derivedColumn select(mapColumn(",
 				"          TITLEID,",
 				"          ORDERING,",
 				"          TITLE,",
@@ -129,24 +135,34 @@
 				"          TYPES,",
 				"          ATTRIBUTES,",
 				"          ISORIGINALTITLE,",
-				"          FILENAME,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE,",
-				"          TITLE_AKAS_SK = rownum",
+				"          TITLE_AKAS_SK,",
+				"          COUNTRY_CODE_SK,",
+				"          ISO_LANGUAGE_SK,",
+				"          MOVIE_SK",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> select1",
-				"source, sourceDimCountry join(REGION == COUNTRY_CODE,",
-				"     joinType:'left',",
+				"     skipDuplicateMapOutputs: false) ~> select",
+				"surrogateKey, sourceDimCountry join(REGION == COUNTRY_CODE,",
+				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join",
-				"join, sourceDimLaanguage join(LANGUAGE == ERROR_FUNCTION(''),",
+				"     broadcast: 'auto')~> joinCountry",
+				"joinCountry, sourceDimLanguage join(LANGUAGE == LANGUAGE_CODE,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinLanguage",
-				"select1 sink(allowSchemaDrift: true,",
+				"joinLanguage, sourceDimMovie join(TITLEID == TCONST,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinMovie",
+				"source keyGenerate(output(RowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          TITLE_AKAS_SK as decimal(0,0),",
@@ -173,6 +189,9 @@
 				"     stageInsert: true,",
 				"     mapColumn(",
 				"          TITLE_AKAS_SK,",
+				"          COUNTRY_CODE_SK,",
+				"          ISO_LANGUAGE_SK,",
+				"          MOVIE_SK,",
 				"          ORDERING,",
 				"          TITLE,",
 				"          TYPES,",
@@ -183,7 +202,7 @@
 				"          LANGUAGE,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE",
-				"     )) ~> sink1"
+				"     )) ~> sink"
 			]
 		}
 	}
