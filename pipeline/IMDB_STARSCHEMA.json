@@ -55,7 +55,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowDimPerson",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -137,7 +140,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowDimTitleAkas",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
