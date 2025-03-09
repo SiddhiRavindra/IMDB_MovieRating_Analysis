@@ -16,7 +16,7 @@
 						"referenceName": "SnowflakeTableCountryCode",
 						"type": "DatasetReference"
 					},
-					"name": "source1"
+					"name": "sourceDimCountry"
 				}
 			],
 			"sinks": [
@@ -30,16 +30,13 @@
 			],
 			"transformations": [
 				{
-					"name": "surrogateKey1"
-				},
-				{
 					"name": "derivedColumn1"
 				},
 				{
 					"name": "select1"
 				},
 				{
-					"name": "join1"
+					"name": "join"
 				}
 			],
 			"scriptLines": [
@@ -72,11 +69,8 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> source1",
-				"source keyGenerate(output(rownum as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey1",
-				"join1 derive(DI_JOB_ID = $jobid,",
+				"     format: 'table') ~> sourceDimCountry",
+				"join derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp(),",
 				"          rownum = rownum) ~> derivedColumn1",
 				"derivedColumn1 select(mapColumn(",
@@ -95,11 +89,11 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> select1",
-				"surrogateKey1, source1 join(REGION == COUNTRY_CODE,",
+				"source, sourceDimCountry join(REGION == COUNTRY_CODE,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1",
+				"     broadcast: 'auto')~> join",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
