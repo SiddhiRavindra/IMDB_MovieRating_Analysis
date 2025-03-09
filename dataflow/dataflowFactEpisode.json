@@ -36,9 +36,15 @@
 				},
 				{
 					"name": "joinDimDate"
+				},
+				{
+					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     jobid as string (uuid())",
+				"}",
 				"source(output(",
 				"          TCONST as string,",
 				"          PARENTTCONST as string,",
@@ -93,7 +99,9 @@
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinDimDate"
+				"     broadcast: 'auto')~> joinDimDate",
+				"joinDimDate derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn1"
 			]
 		}
 	}
