@@ -1,5 +1,5 @@
 {
-	"name": "SnowflakeTableTitleBasics",
+	"name": "SnowflakeTable_titlebasicsv2",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "Snowflake_IMDB",
@@ -32,21 +32,15 @@
 			},
 			{
 				"name": "ISADULT",
-				"type": "NUMBER",
-				"precision": 10,
-				"scale": 0
+				"type": "VARCHAR"
 			},
 			{
 				"name": "STARTYEAR",
-				"type": "NUMBER",
-				"precision": 38,
-				"scale": 0
+				"type": "VARCHAR"
 			},
 			{
 				"name": "ENDYEAR",
-				"type": "NUMBER",
-				"precision": 38,
-				"scale": 0
+				"type": "VARCHAR"
 			},
 			{
 				"name": "RUNTIMEMINUTES",
@@ -69,7 +63,7 @@
 		],
 		"typeProperties": {
 			"schema": "IMDB_SCHEMA",
-			"table": "TITLE_BASICS_STAGE"
+			"table": "TITLE_BASICS_STAGE_V2"
 		}
 	}
 }

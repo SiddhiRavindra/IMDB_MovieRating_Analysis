@@ -70,6 +70,7 @@
 				"selecttitleBasics sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
+				"          TITLE_BASICS_SK as decimal(38,0),",
 				"          TCONST as string,",
 				"          TITLETYPE as string,",
 				"          PRIMARYTITLE as string,",
