@@ -108,7 +108,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowDimMovie",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
