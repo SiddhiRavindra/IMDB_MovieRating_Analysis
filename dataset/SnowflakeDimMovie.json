@@ -75,7 +75,7 @@
 		],
 		"typeProperties": {
 			"schema": "IMDB_SCHEMA",
-			"table": "DIMMOVIE"
+			"table": "TITLE_BASICS_STAGE"
 		}
 	}
 }
