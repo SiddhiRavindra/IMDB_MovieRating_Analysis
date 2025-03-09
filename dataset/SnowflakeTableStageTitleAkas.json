@@ -1,0 +1,71 @@
+{
+	"name": "SnowflakeTableStageTitleAkas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Snowflake_IMDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [
+			{
+				"name": "TITLE_AKAS_SK",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "TITLEID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "ORDERING",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "TITLE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "REGION",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "LANGUAGE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TYPES",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "ATTRIBUTES",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "ISORIGINALTITLE",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "FILENAME",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DI_JOB_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DI_LOAD_DATE",
+				"type": "DATE"
+			}
+		],
+		"typeProperties": {
+			"schema": "IMDB_SCHEMA",
+			"table": "TITLE_AKAS_STAGE"
+		}
+	}
+}

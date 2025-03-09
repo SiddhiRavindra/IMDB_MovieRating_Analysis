@@ -1,0 +1,83 @@
+{
+	"name": "SnowflakeTableDIMtitleakas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Snowflake_IMDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [
+			{
+				"name": "TITLE_AKAS_SK",
+				"type": "NUMBER",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "COUNTRY_CODE_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "ISO_LANGUAGE_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "MOVIE_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "ORDERING",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "TITLE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TYPES",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "ATTRIBUTES",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "ISORIGINALTITLE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "REGION",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "TITLEID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "LANGUAGE",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DI_JOB_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DI_LOAD_DATE",
+				"type": "DATE"
+			}
+		],
+		"typeProperties": {
+			"schema": "IMDB_SCHEMA",
+			"table": "DIMTITLEAKAS"
+		}
+	}
+}

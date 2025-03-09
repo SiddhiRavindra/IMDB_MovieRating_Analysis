@@ -3,11 +3,141 @@
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableStageTitleAkas",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableCountryCode",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableDIMtitleakas",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "join1"
+				}
+			],
 			"scriptLines": [
-				""
+				"parameters{",
+				"     jobid as string (uuid())",
+				"}",
+				"source(output(",
+				"          TITLE_AKAS_SK as decimal(38,0),",
+				"          TITLEID as string,",
+				"          ORDERING as decimal(38,0),",
+				"          TITLE as string,",
+				"          REGION as string,",
+				"          LANGUAGE as string,",
+				"          TYPES as string,",
+				"          ATTRIBUTES as string,",
+				"          ISORIGINALTITLE as decimal(38,0),",
+				"          FILENAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> source",
+				"source(output(",
+				"          COUNTRY_CODE_SK as decimal(38,0),",
+				"          COUNTRY_NAME as string,",
+				"          COUNTRY_CODE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> source1",
+				"source keyGenerate(output(rownum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"join1 derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DATE = currentTimestamp(),",
+				"          rownum = rownum) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          TITLEID,",
+				"          ORDERING,",
+				"          TITLE,",
+				"          REGION,",
+				"          LANGUAGE,",
+				"          TYPES,",
+				"          ATTRIBUTES,",
+				"          ISORIGINALTITLE,",
+				"          FILENAME,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE,",
+				"          TITLE_AKAS_SK = rownum",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select1",
+				"surrogateKey1, source1 join(REGION == COUNTRY_CODE,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TITLE_AKAS_SK as decimal(0,0),",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          MOVIE_SK as decimal(10,0),",
+				"          ORDERING as decimal(38,0),",
+				"          TITLE as string,",
+				"          TYPES as string,",
+				"          ATTRIBUTES as string,",
+				"          ISORIGINALTITLE as string,",
+				"          REGION as string,",
+				"          TITLEID as string,",
+				"          LANGUAGE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          TITLE_AKAS_SK,",
+				"          ORDERING,",
+				"          TITLE,",
+				"          TYPES,",
+				"          ATTRIBUTES,",
+				"          ISORIGINALTITLE,",
+				"          REGION,",
+				"          TITLEID,",
+				"          LANGUAGE,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE",
+				"     )) ~> sink1"
 			]
 		}
 	}
