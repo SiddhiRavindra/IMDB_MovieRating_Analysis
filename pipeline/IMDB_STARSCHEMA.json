@@ -5,6 +5,8 @@
 			{
 				"name": "DIMCOUNTRY",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.00:30:00",
@@ -65,8 +67,6 @@
 			{
 				"name": "DIMLANUGAE",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
