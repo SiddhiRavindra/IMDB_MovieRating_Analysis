@@ -1,0 +1,80 @@
+{
+	"name": "dataflowCountryCode",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ParquetCountryCode",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableCountryCode",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn"
+				},
+				{
+					"name": "select"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jobid as string (uuid())",
+				"}",
+				"source(output(",
+				"          country_code as string,",
+				"          country_name as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'parquet') ~> source",
+				"source derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DT = currentTimestamp()) ~> derivedColumn",
+				"derivedColumn select(mapColumn(",
+				"          country_code,",
+				"          country_name,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select",
+				"select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          COUNTRY_CODE_SK as decimal(38,0),",
+				"          COUNTRY_NAME as string,",
+				"          COUNTRY_CODE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          COUNTRY_NAME = country_name,",
+				"          COUNTRY_CODE = country_code,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE = DI_LOAD_DT",
+				"     )) ~> sink"
+			]
+		}
+	}
+}
