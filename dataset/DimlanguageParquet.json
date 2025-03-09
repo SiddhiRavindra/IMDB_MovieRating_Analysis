@@ -1,0 +1,33 @@
+{
+	"name": "DimlanguageParquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IMDBDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "iso_languageCodes.parquet",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "language_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "Endonym",
+				"type": "UTF8"
+			},
+			{
+				"name": "language_code",
+				"type": "UTF8"
+			}
+		]
+	}
+}
