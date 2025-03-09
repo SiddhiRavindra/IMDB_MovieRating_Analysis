@@ -23,6 +23,10 @@
 						}
 					},
 					"staging": {
+						"linkedService": {
+							"referenceName": "IMDBBlobStorage",
+							"type": "LinkedServiceReference"
+						},
 						"folderPath": "gold"
 					},
 					"compute": {
