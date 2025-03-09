@@ -1,0 +1,29 @@
+{
+	"name": "ParquetDimCountry",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IMDBDataLakeStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "country_codesp.parquet",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "country_code",
+				"type": "UTF8"
+			},
+			{
+				"name": "country_name",
+				"type": "UTF8"
+			}
+		]
+	}
+}
