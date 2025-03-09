@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTable1",
+						"referenceName": "SnowflakeDimCountry",
 						"type": "DatasetReference"
 					},
 					"name": "sinkDimCountry"
@@ -62,16 +62,9 @@
 				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          TITLE_BASICS_SK as decimal(38,0),",
-				"          TCONST as string,",
-				"          TITLETYPE as string,",
-				"          PRIMARYTITLE as string,",
-				"          ORIGINALTITLE as string,",
-				"          ISADULT as string,",
-				"          STARTYEAR as string,",
-				"          ENDYEAR as string,",
-				"          RUNTIMEMINUTES as decimal(38,0),",
-				"          GENRES as string,",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          COUNTRY_CODE as string,",
+				"          COUNTRY_NAME as string,",
 				"          DI_JOB_ID as string,",
 				"          DI_LOAD_DATE as date",
 				"     ),",
@@ -79,9 +72,15 @@
 				"     insertable:true,",
 				"     updateable:false,",
 				"     upsertable:false,",
+				"     truncate:true,",
 				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sinkDimCountry"
+				"     mapColumn(",
+				"          COUNTRY_CODE_SK,",
+				"          COUNTRY_CODE,",
+				"          COUNTRY_NAME,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE",
+				"     )) ~> sinkDimCountry"
 			]
 		}
 	}
