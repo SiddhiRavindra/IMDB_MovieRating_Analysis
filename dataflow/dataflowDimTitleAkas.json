@@ -57,9 +57,6 @@
 				},
 				{
 					"name": "surrogateKey"
-				},
-				{
-					"name": "joinlanguage"
 				}
 			],
 			"scriptLines": [
@@ -150,7 +147,7 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinCountry",
-				"joinlanguage, sourceDimMovie join(TITLEID == TCONST,",
+				"joinCountry, sourceDimMovie join(TITLEID == TCONST,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -158,11 +155,6 @@
 				"source keyGenerate(output(RowNum as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey",
-				"joinCountry, sourceDimLanguage join(LANGUAGE == upper(LANGUAGE_NAME),",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinlanguage",
 				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
