@@ -102,7 +102,7 @@
 				"     format: 'table',",
 				"     stageInsert: true,",
 				"     mapColumn(",
-				"          MOVIE_SK,",
+				"          MOVIE_SK = TITLE_BASICS_SK,",
 				"          TCONST,",
 				"          TITLETYPE,",
 				"          PRIMARYTITLE,",
