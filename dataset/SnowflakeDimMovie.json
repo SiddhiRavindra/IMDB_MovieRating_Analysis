@@ -9,22 +9,14 @@
 		"type": "SnowflakeV2Table",
 		"schema": [
 			{
-				"name": "MOVIE_SK",
+				"name": "TITLE_BASICS_SK",
 				"type": "NUMBER",
-				"precision": 10,
+				"precision": 38,
 				"scale": 0
 			},
 			{
 				"name": "TCONST",
 				"type": "VARCHAR"
-			},
-			{
-				"name": "START_DATE_ID",
-				"type": "DATE"
-			},
-			{
-				"name": "END_DATE_ID",
-				"type": "DATE"
 			},
 			{
 				"name": "TITLETYPE",
@@ -40,7 +32,9 @@
 			},
 			{
 				"name": "ISADULT",
-				"type": "VARCHAR"
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
 			},
 			{
 				"name": "STARTYEAR",
@@ -75,7 +69,7 @@
 		],
 		"typeProperties": {
 			"schema": "IMDB_SCHEMA",
-			"table": "TITLE_BASICS_STAGE"
+			"table": "DIMMOVIE"
 		}
 	}
 }

@@ -18,18 +18,18 @@
 						"referenceName": "SnowflakeTableDIMmovie",
 						"type": "DatasetReference"
 					},
-					"name": "sink"
+					"name": "sink1"
 				}
 			],
 			"transformations": [
 				{
-					"name": "surrogateKey"
+					"name": "surrogateKey1"
 				},
 				{
-					"name": "derivedColumn"
+					"name": "derivedColumn1"
 				},
 				{
-					"name": "select"
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -55,13 +55,11 @@
 				"     format: 'table') ~> source",
 				"source keyGenerate(output(rownum as long),",
 				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey",
-				"surrogateKey derive(DI_JOB_ID = $jobid,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp(),",
-				"          rownum = rownum,",
-				"          TCONST = iif(isNull(TCONST), 'unknown', TCONST),",
-				"          GENRES = iif( GENRES == '\\\\N' || isNull(GENRES) || trim(GENRES) == '', 'Unknown', GENRES )) ~> derivedColumn",
-				"derivedColumn select(mapColumn(",
+				"          rownum = rownum) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
 				"          TCONST,",
 				"          TITLETYPE,",
 				"          PRIMARYTITLE,",
@@ -76,8 +74,8 @@
 				"          MOVIE_SK = rownum",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> select",
-				"select sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: false) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          MOVIE_SK as decimal(10,0),",
@@ -115,7 +113,7 @@
 				"          GENRES,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE",
-				"     )) ~> sink"
+				"     )) ~> sink1"
 			]
 		}
 	}

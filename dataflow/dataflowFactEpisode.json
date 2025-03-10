@@ -35,9 +35,6 @@
 					"name": "joinDimMovie"
 				},
 				{
-					"name": "joinDimDate"
-				},
-				{
 					"name": "derivedColumn1"
 				}
 			],
@@ -57,14 +54,12 @@
 				"     validateSchema: false,",
 				"     format: 'table') ~> source",
 				"source(output(",
-				"          MOVIE_SK as decimal(10,0),",
+				"          TITLE_BASICS_SK as decimal(38,0),",
 				"          TCONST as string,",
-				"          START_DATE_ID as date,",
-				"          END_DATE_ID as date,",
 				"          TITLETYPE as string,",
 				"          PRIMARYTITLE as string,",
 				"          ORIGINALTITLE as string,",
-				"          ISADULT as string,",
+				"          ISADULT as decimal(10,0),",
 				"          STARTYEAR as decimal(38,0),",
 				"          ENDYEAR as decimal(38,0),",
 				"          RUNTIMEMINUTES as decimal(38,0),",
@@ -95,12 +90,7 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinDimMovie",
-				"joinDimMovie, sourceDimDate join(STARTYEAR == YEAR,",
-				"     joinType:'inner',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinDimDate",
-				"joinDimDate derive(DI_JOB_ID = $jobid,",
+				"joinDimMovie derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn1"
 			]
 		}
