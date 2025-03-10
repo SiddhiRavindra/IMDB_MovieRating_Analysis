@@ -53,9 +53,6 @@
 					"name": "joinCountry"
 				},
 				{
-					"name": "joinLanguage"
-				},
-				{
 					"name": "joinMovie"
 				},
 				{
@@ -151,13 +148,8 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinCountry",
-				"joinCountry, sourceDimLanguage join(LANGUAGE == LANGUAGE_NAME,",
+				"joinCountry, sourceDimMovie join(TITLEID == TCONST,",
 				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinLanguage",
-				"joinLanguage, sourceDimMovie join(TITLEID == TCONST,",
-				"     joinType:'right',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinMovie",
