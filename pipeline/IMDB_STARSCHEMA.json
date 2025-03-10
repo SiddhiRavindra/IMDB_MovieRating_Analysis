@@ -155,6 +155,8 @@
 			{
 				"name": "FCAT_MOVIEDETAILS",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -167,7 +169,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowfactMovieDetails",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -179,6 +184,8 @@
 			{
 				"name": "FACT_EPISODE",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
