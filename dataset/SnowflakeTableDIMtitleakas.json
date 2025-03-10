@@ -11,7 +11,7 @@
 			{
 				"name": "TITLE_AKAS_SK",
 				"type": "NUMBER",
-				"precision": 0,
+				"precision": 10,
 				"scale": 0
 			},
 			{
