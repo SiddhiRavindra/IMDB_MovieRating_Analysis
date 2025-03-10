@@ -9,14 +9,22 @@
 		"type": "SnowflakeV2Table",
 		"schema": [
 			{
-				"name": "TITLE_BASICS_SK",
+				"name": "MOVIE_SK",
 				"type": "NUMBER",
-				"precision": 38,
+				"precision": 10,
 				"scale": 0
 			},
 			{
 				"name": "TCONST",
 				"type": "VARCHAR"
+			},
+			{
+				"name": "START_DATE_ID",
+				"type": "DATE"
+			},
+			{
+				"name": "END_DATE_ID",
+				"type": "DATE"
 			},
 			{
 				"name": "TITLETYPE",
@@ -32,9 +40,7 @@
 			},
 			{
 				"name": "ISADULT",
-				"type": "NUMBER",
-				"precision": 10,
-				"scale": 0
+				"type": "VARCHAR"
 			},
 			{
 				"name": "STARTYEAR",
