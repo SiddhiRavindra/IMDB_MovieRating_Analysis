@@ -11,19 +11,19 @@
 			{
 				"name": "FACT_MOVIE_SK",
 				"type": "NUMBER",
-				"precision": 0,
+				"precision": 10,
 				"scale": 0
 			},
 			{
 				"name": "DATE_SK",
 				"type": "NUMBER",
-				"precision": 0,
+				"precision": 10,
 				"scale": 0
 			},
 			{
 				"name": "TITLE_AKAS_SK",
 				"type": "NUMBER",
-				"precision": 0,
+				"precision": 10,
 				"scale": 0
 			},
 			{
@@ -55,10 +55,6 @@
 				"type": "FLOAT"
 			},
 			{
-				"name": "NUMVOTES",
-				"type": "BINARY"
-			},
-			{
 				"name": "CATEGORY",
 				"type": "VARCHAR"
 			},
@@ -77,6 +73,12 @@
 			{
 				"name": "DI_LOAD_DATE",
 				"type": "DATE"
+			},
+			{
+				"name": "NUMVOTES",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
 			}
 		],
 		"typeProperties": {
