@@ -20,7 +20,9 @@
 			},
 			{
 				"name": "AVERAGERATING",
-				"type": "FLOAT"
+				"type": "FLOAT",
+				"precision": 38,
+				"scale": 0
 			},
 			{
 				"name": "NUMVOTES",
