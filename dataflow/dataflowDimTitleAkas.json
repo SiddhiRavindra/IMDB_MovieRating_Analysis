@@ -170,7 +170,7 @@
 				"   substring(LANGUAGE, 1, locate('\u0002', LANGUAGE) - 1),",
 				"   LANGUAGE",
 				"),",
-				"          CLEANED_LANGUAGE = coalesce(EXTRACTED_L, 'unk')) ~> derivedColumncleanlanguage",
+				"          CLEANED_LANGUAGE = coalesce(trim(LANGUAGE), 'unk')) ~> derivedColumncleanlanguage",
 				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
