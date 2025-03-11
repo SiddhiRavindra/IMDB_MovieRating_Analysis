@@ -57,6 +57,12 @@
 				},
 				{
 					"name": "surrogateKey"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "derivedColumncleanlanguage"
 				}
 			],
 			"scriptLines": [
@@ -127,7 +133,6 @@
 				"derivedColumn select(mapColumn(",
 				"          TITLE_AKAS_SK,",
 				"          COUNTRY_CODE_SK,",
-				"          ISO_LANGUAGE_SK,",
 				"          MOVIE_SK,",
 				"          ORDERING,",
 				"          TITLE,",
@@ -147,7 +152,7 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinCountry",
-				"joinCountry, sourceDimMovie join(TITLEID == TCONST,",
+				"lookup1, sourceDimMovie join(TITLEID == TCONST,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -155,6 +160,17 @@
 				"source keyGenerate(output(RowNum as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey",
+				"derivedColumncleanlanguage, sourceDimLanguage lookup(LANGUAGE == LANGUAGE_CODE,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(ERROR_FUNCTION(''), true),",
+				"     broadcast: 'auto')~> lookup1",
+				"joinCountry derive(EXTRACTED_LANGUAGE = iif(",
+				"   locate('\u0002', LANGUAGE) > 0,",
+				"   substring(LANGUAGE, 1, locate('\u0002', LANGUAGE) - 1),",
+				"   LANGUAGE",
+				"),",
+				"          CLEANED_LANGUAGE = coalesce(EXTRACTED_L, 'unk')) ~> derivedColumncleanlanguage",
 				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -189,7 +205,6 @@
 				"          TYPES,",
 				"          ATTRIBUTES,",
 				"          REGION,",
-				"          TITLEID = TCONST,",
 				"          LANGUAGE,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE",
