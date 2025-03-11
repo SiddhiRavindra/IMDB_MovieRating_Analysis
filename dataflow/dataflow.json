@@ -20,7 +20,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTableDIMDate",
+						"referenceName": "SnowflakeBridgeDate",
 						"type": "DatasetReference"
 					},
 					"name": "source2"
@@ -84,11 +84,8 @@
 				"     validateSchema: false,",
 				"     format: 'table') ~> source1",
 				"source(output(",
-				"          DATE_SK as decimal(0,0),",
-				"          DATE as date,",
-				"          YEAR as decimal(38,0),",
-				"          MONTH as decimal(38,0),",
-				"          DAY_OF_WEEK as string,",
+				"          BRIDGE_DATE_SK as decimal(10,0),",
+				"          DATE_SK as decimal(10,0),",
 				"          DI_JOB_ID as string,",
 				"          DI_LOAD_DATE as date",
 				"     ),",
@@ -99,9 +96,8 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> lookup1",
-				"lookup1 derive(episode_date = toDate(concat(toString(STARTYEAR), '-01-01'), 'yyyy-MM-dd')\r",
-				") ~> derivedColumn1",
-				"derivedColumn1, source2 lookup(episode_date == DATE,",
+				"lookup1 derive(episode_date = toDate(concat(toString(STARTYEAR), '-01-01'), 'yyyy-MM-dd')) ~> derivedColumn1",
+				"derivedColumn1, source2 lookup(episode_date == DATE_SKDATE_SK,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> lookup2",

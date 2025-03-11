@@ -10,26 +10,12 @@
 						"type": "DatasetReference"
 					},
 					"name": "source"
-				},
-				{
-					"dataset": {
-						"referenceName": "SnowflakeDimMovie",
-						"type": "DatasetReference"
-					},
-					"name": "sourceDimMovie"
-				},
-				{
-					"dataset": {
-						"referenceName": "SnowflakeTableDIMDate",
-						"type": "DatasetReference"
-					},
-					"name": "sourceDimDate"
 				}
 			],
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTestFactEpisode",
+						"referenceName": "SnowflakeFactEpisode",
 						"type": "DatasetReference"
 					},
 					"name": "sink"
@@ -40,13 +26,19 @@
 					"name": "surrogateKey1"
 				},
 				{
-					"name": "joinDimMovie"
+					"name": "surrogateKey2"
 				},
 				{
-					"name": "joinDimDate"
+					"name": "surrogateKey3"
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "select"
+				},
+				{
+					"name": "surrogateKey4"
 				}
 			],
 			"scriptLines": [
@@ -64,58 +56,42 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> source",
-				"source(output(",
-				"          MOVIE_SK as decimal(10,0),",
-				"          TCONST as string,",
-				"          START_DATE_ID as date,",
-				"          END_DATE_ID as date,",
-				"          TITLETYPE as string,",
-				"          PRIMARYTITLE as string,",
-				"          ORIGINALTITLE as string,",
-				"          ISADULT as string,",
-				"          STARTYEAR as decimal(38,0),",
-				"          ENDYEAR as decimal(38,0),",
-				"          RUNTIMEMINUTES as decimal(38,0),",
-				"          GENRES as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimMovie",
-				"source(output(",
-				"          DATE_SK as decimal(0,0),",
-				"          DATE as date,",
-				"          YEAR as decimal(38,0),",
-				"          MONTH as decimal(38,0),",
-				"          DAY_OF_WEEK as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimDate",
-				"source keyGenerate(output(fact_episode_SK as long),",
+				"surrogateKey4 keyGenerate(output(rownum as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey1",
-				"surrogateKey1, sourceDimMovie join(source@TCONST == sourceDimMovie@TCONST,",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinDimMovie",
-				"joinDimMovie, sourceDimDate join(STARTYEAR == YEAR,",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinDimDate",
-				"joinDimDate derive(DI_JOB_ID = $jobid,",
+				"surrogateKey1 keyGenerate(output(date as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey2",
+				"surrogateKey2 keyGenerate(output(movie as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey3",
+				"surrogateKey3 derive(DI_LOAD_DT = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 select(mapColumn(",
+				"          TCONST,",
+				"          PARENTTCONST,",
+				"          SEASONNUMBER,",
+				"          EPISODENUMBER,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE,",
+				"          BRIDGE = bridge,",
+				"          ROWNUM = rownum,",
+				"          DATE = date,",
+				"          MOVIE = movie,",
+				"          DI_LOAD_DT",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select",
+				"source keyGenerate(output(bridge as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey4",
+				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          FACT_EPISODE_SK as decimal(0,0),",
-				"          DATE_SK as decimal(0,0),",
+				"          FACT_EPISODE_SK as decimal(10,0),",
 				"          MOVIE_SK as decimal(10,0),",
+				"          BRIDGE_DATE_SK as decimal(10,0),",
+				"          DATE_SK as decimal(10,0),",
 				"          EPISODENUMBER as decimal(38,0),",
 				"          SEASONNUMBER as decimal(38,0),",
 				"          DI_JOB_ID as string,",
@@ -128,9 +104,10 @@
 				"     format: 'table',",
 				"     stageInsert: true,",
 				"     mapColumn(",
-				"          FACT_EPISODE_SK = fact_episode_SK,",
-				"          DATE_SK,",
-				"          MOVIE_SK,",
+				"          FACT_EPISODE_SK = ROWNUM,",
+				"          MOVIE_SK = MOVIE,",
+				"          BRIDGE_DATE_SK = BRIDGE,",
+				"          DATE_SK = DATE,",
 				"          EPISODENUMBER,",
 				"          SEASONNUMBER,",
 				"          DI_JOB_ID,",
