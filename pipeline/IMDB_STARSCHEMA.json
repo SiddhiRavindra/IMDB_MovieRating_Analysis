@@ -128,13 +128,11 @@
 			{
 				"name": "DIM_TITLE_AKAS",
 				"type": "ExecuteDataFlow",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
+					"timeout": "0.00:30:00",
+					"retry": 1,
+					"retryIntervalInSeconds": 10,
 					"secureOutput": false,
 					"secureInput": false
 				},
