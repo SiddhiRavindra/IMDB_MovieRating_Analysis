@@ -27,6 +27,12 @@
 				},
 				{
 					"name": "derivedColumn"
+				},
+				{
+					"name": "select"
+				},
+				{
+					"name": "surrogateKey1"
 				}
 			],
 			"scriptLines": [
@@ -45,12 +51,23 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourceDate",
-				"sourceDate keyGenerate(output(rowNum as long),",
+				"surrogateKey1 keyGenerate(output(rowNum as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey",
 				"surrogateKey derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn",
-				"derivedColumn sink(allowSchemaDrift: true,",
+				"derivedColumn select(mapColumn(",
+				"          DATE_SK = dateSK,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE,",
+				"          rowNum",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select",
+				"sourceDate keyGenerate(output(dateSK as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          BRIDGE_DATE_SK as decimal(10,0),",
