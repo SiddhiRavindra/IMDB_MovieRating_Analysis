@@ -6,45 +6,24 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTable_IMDB",
+						"referenceName": "SnowflakeTableTitleBasics",
 						"type": "DatasetReference"
 					},
 					"name": "source"
 				},
 				{
 					"dataset": {
-						"referenceName": "SnowflakeDimMovie",
+						"referenceName": "SnowflakeTable_IMDB",
 						"type": "DatasetReference"
 					},
-					"name": "sourceDimMovie"
+					"name": "sourcetitleratingstage"
 				},
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTabletitle_akas",
+						"referenceName": "SnowflakeTableTitlePrincipals",
 						"type": "DatasetReference"
 					},
-					"name": "sourceTitleAkas"
-				},
-				{
-					"dataset": {
-						"referenceName": "SnowflakeDimCountry",
-						"type": "DatasetReference"
-					},
-					"name": "sourceCountry"
-				},
-				{
-					"dataset": {
-						"referenceName": "SnowflakeTable_NewDIMlanguage",
-						"type": "DatasetReference"
-					},
-					"name": "sourceDimLanguage"
-				},
-				{
-					"dataset": {
-						"referenceName": "SnowflakeDimPerson",
-						"type": "DatasetReference"
-					},
-					"name": "sourceDimPerson"
+					"name": "sourcetitleprincipalsstage"
 				}
 			],
 			"sinks": [],
@@ -53,6 +32,23 @@
 				"parameters{",
 				"     jobid as string (uuid())",
 				"}",
+				"source(output(",
+				"          TITLE_BASICS_SK as decimal(38,0),",
+				"          TCONST as string,",
+				"          TITLETYPE as string,",
+				"          PRIMARYTITLE as string,",
+				"          ORIGINALTITLE as string,",
+				"          ISADULT as decimal(10,0),",
+				"          STARTYEAR as decimal(38,0),",
+				"          ENDYEAR as decimal(38,0),",
+				"          RUNTIMEMINUTES as decimal(38,0),",
+				"          GENRES as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> source",
 				"source(output(",
 				"          TITLE_RATING_SK as decimal(38,0),",
 				"          TCONST as string,",
@@ -63,76 +59,21 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> source",
+				"     format: 'table') ~> sourcetitleratingstage",
 				"source(output(",
-				"          MOVIE_SK as decimal(10,0),",
+				"          TITLE_PRINCIPALS_SK as decimal(38,0),",
 				"          TCONST as string,",
-				"          START_DATE_ID as date,",
-				"          END_DATE_ID as date,",
-				"          TITLETYPE as string,",
-				"          PRIMARYTITLE as string,",
-				"          ORIGINALTITLE as string,",
-				"          ISADULT as string,",
-				"          STARTYEAR as decimal(38,0),",
-				"          ENDYEAR as decimal(38,0),",
-				"          RUNTIMEMINUTES as decimal(38,0),",
-				"          GENRES as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimMovie",
-				"source(output(",
-				"          TITLEID as string,",
 				"          ORDERING as decimal(38,0),",
-				"          TITLE as string,",
-				"          REGION as string,",
-				"          LANGUAGE as string,",
-				"          TYPES as string,",
-				"          ATTRIBUTES as string,",
-				"          ISORIGINALTITLE as decimal(38,0),",
-				"          FILENAME as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceTitleAkas",
-				"source(output(",
-				"          COUNTRY_CODE_SK as decimal(10,0),",
-				"          COUNTRY_CODE as string,",
-				"          COUNTRY_NAME as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceCountry",
-				"source(output(",
-				"          ISO_LANGUAGE_SK as decimal(10,0),",
-				"          LANGUAGE_CODE as string,",
-				"          LANGUAGE_NAME as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date,",
-				"          ENDONYM as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimLanguage",
-				"source(output(",
-				"          PERSON_SK as decimal(10,0),",
 				"          NCONST as string,",
-				"          BIRTHYEAR as decimal(38,0),",
-				"          DEATHYEAR as decimal(38,0),",
-				"          PRIMARYPROFESSION as string,",
-				"          PRIMARYNAME as string,",
+				"          CATEGORY as string,",
+				"          JOB as string,",
+				"          CHARACTERS as string,",
 				"          DI_JOB_ID as string,",
 				"          DI_LOAD_DATE as date",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimPerson"
+				"     format: 'table') ~> sourcetitleprincipalsstage"
 			]
 		}
 	}

@@ -62,6 +62,7 @@
 				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
+				"          TITLE_PRINCIPALS_SK as decimal(38,0),",
 				"          TCONST as string,",
 				"          ORDERING as decimal(38,0),",
 				"          NCONST as string,",
