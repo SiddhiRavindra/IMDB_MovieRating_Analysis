@@ -68,6 +68,9 @@
 				},
 				{
 					"name": "join2"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
@@ -179,7 +182,14 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join2",
-				"select1 sink(allowSchemaDrift: true,",
+				"select1 derive(FACT_MOVIE_SK = iif(isNull(toInteger(FACT_MOVIE_SK)), -1, toInteger(FACT_MOVIE_SK)),",
+				"          DATE_SK = iif(isNull(toInteger(DATE_SK)), -1, toInteger(DATE_SK)),",
+				"          TITLE_AKAS_SK = iif(isNull(toInteger(TITLE_AKAS_SK)), -1, toInteger(TITLE_AKAS_SK)),",
+				"          COUNTRY_CODE_SK = iif(isNull(toInteger(COUNTRY_CODE_SK)), -1, toInteger(COUNTRY_CODE_SK)),",
+				"          ISO_LANGUAGE_SK = iif(isNull(toInteger(ISO_LANGUAGE_SK)), -1, toInteger(ISO_LANGUAGE_SK)),",
+				"          PERSON_SK = iif(isNull(toInteger(PERSON_SK)), -1, toInteger(PERSON_SK)),",
+				"          MOVIE_SK = iif(isNull(toInteger(MOVIE_SK)), -1, toInteger(MOVIE_SK))) ~> derivedColumn2",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          FACT_MOVIE_SK as decimal(10,0),",
