@@ -1,0 +1,55 @@
+{
+	"name": "SnowflakeTestFactEpisode",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Snowflake_IMDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SnowflakeV2Table",
+		"schema": [
+			{
+				"name": "FACT_EPISODE_SK",
+				"type": "NUMBER",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "DATE_SK",
+				"type": "NUMBER",
+				"precision": 0,
+				"scale": 0
+			},
+			{
+				"name": "MOVIE_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "EPISODENUMBER",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "SEASONNUMBER",
+				"type": "NUMBER",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "DI_JOB_ID",
+				"type": "VARCHAR"
+			},
+			{
+				"name": "DI_LOAD_DATE",
+				"type": "DATE"
+			}
+		],
+		"typeProperties": {
+			"schema": "IMDB_SCHEMA",
+			"table": "FACTEPISODEDETAILS_V2"
+		}
+	}
+}

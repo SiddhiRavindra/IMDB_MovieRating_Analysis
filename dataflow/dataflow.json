@@ -1,5 +1,5 @@
 {
-	"name": "dataflowFactEpisode",
+	"name": "dataflow",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -16,39 +16,43 @@
 						"referenceName": "SnowflakeDimMovie",
 						"type": "DatasetReference"
 					},
-					"name": "sourceDimMovie"
+					"name": "source1"
 				},
 				{
 					"dataset": {
 						"referenceName": "SnowflakeTableDIMDate",
 						"type": "DatasetReference"
 					},
-					"name": "sourceDimDate"
+					"name": "source2"
 				}
 			],
 			"sinks": [
 				{
-					"name": "sink"
+					"dataset": {
+						"referenceName": "SnowflakeTestFactEpisode",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
 				}
 			],
 			"transformations": [
 				{
-					"name": "surrogateKey1"
-				},
-				{
-					"name": "joinDimMovie"
-				},
-				{
-					"name": "joinDimDate"
+					"name": "lookup1"
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "surrogateKey1"
 				}
 			],
 			"scriptLines": [
-				"parameters{",
-				"     jobid as string (uuid())",
-				"}",
 				"source(output(",
 				"          TCONST as string,",
 				"          PARENTTCONST as string,",
@@ -78,7 +82,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimMovie",
+				"     format: 'table') ~> source1",
 				"source(output(",
 				"          DATE_SK as decimal(0,0),",
 				"          DATE as date,",
@@ -90,26 +94,50 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimDate",
-				"source keyGenerate(output(fact_episode_SK as long),",
+				"     format: 'table') ~> source2",
+				"surrogateKey1, source1 lookup(source@TCONST == source1@TCONST,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1 derive(episode_date = toDate(concat(toString(STARTYEAR), '-01-01'), 'yyyy-MM-dd')\r",
+				") ~> derivedColumn1",
+				"derivedColumn1, source2 lookup(episode_date == DATE,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2 derive(DI_JOB_ID = uuid(),",
+				"          DI_LOAD_DT = currentTimestamp(),",
+				"          rowNum = rowNum) ~> derivedColumn2",
+				"source keyGenerate(output(rowNum as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey1",
-				"surrogateKey1, sourceDimMovie join(source@TCONST == sourceDimMovie@TCONST,",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinDimMovie",
-				"joinDimMovie, sourceDimDate join(sourceDimMovie@DI_LOAD_DATE == DATE,",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinDimDate",
-				"joinDimDate derive(DI_JOB_ID = $jobid,",
-				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink"
+				"     input(",
+				"          FACT_EPISODE_SK as decimal(0,0),",
+				"          DATE_SK as decimal(0,0),",
+				"          MOVIE_SK as decimal(10,0),",
+				"          EPISODENUMBER as decimal(38,0),",
+				"          SEASONNUMBER as decimal(38,0),",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          FACT_EPISODE_SK = rowNum,",
+				"          DATE_SK,",
+				"          MOVIE_SK,",
+				"          EPISODENUMBER,",
+				"          SEASONNUMBER,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE = DI_LOAD_DT",
+				"     )) ~> sink1"
 			]
 		}
 	}
