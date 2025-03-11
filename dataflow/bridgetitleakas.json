@@ -1,0 +1,114 @@
+{
+	"name": "bridgetitleakas",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeDimCountry",
+						"type": "DatasetReference"
+					},
+					"name": "sourceCountry"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTable_NewDIMlanguage",
+						"type": "DatasetReference"
+					},
+					"name": "sourceLanguage"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeBridge",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn"
+				},
+				{
+					"name": "select"
+				},
+				{
+					"name": "joinCountryLanguage"
+				},
+				{
+					"name": "surrogateKey"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     jobid as string (uuid())",
+				"}",
+				"source(output(",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          COUNTRY_CODE as string,",
+				"          COUNTRY_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceCountry",
+				"source(output(",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          LANGUAGE_CODE as string,",
+				"          LANGUAGE_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date,",
+				"          ENDONYM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceLanguage",
+				"joinCountryLanguage derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn",
+				"derivedColumn select(mapColumn(",
+				"          COUNTRY_CODE_SK,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE,",
+				"          ROWNUM = rowNum,",
+				"          ISO_LANGUAGE_SK",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select",
+				"surrogateKey, sourceLanguage join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinCountryLanguage",
+				"sourceCountry keyGenerate(output(rowNum as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey",
+				"select sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          BRIDGE_TITLE_AKAS_SK as decimal(10,0),",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          BRIDGE_TITLE_AKAS_SK = ROWNUM,",
+				"          COUNTRY_CODE_SK,",
+				"          ISO_LANGUAGE_SK,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE",
+				"     )) ~> sink"
+			]
+		}
+	}
+}
