@@ -41,7 +41,32 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "lookupdimmovietogetMOVIESK"
+				},
+				{
+					"name": "joincountry"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "surrogateKeycountry"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
 				"parameters{",
 				"     jobid as string (uuid())",
@@ -110,7 +135,84 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimlanguage"
+				"     format: 'table') ~> sourceDimlanguage",
+				"derivedColumn1, sourceDIMMOVIE lookup(TITLEID == TCONST,",
+				"     multiple: false,",
+				"     pickup: 'first',",
+				"     asc(MOVIE_SK, true),",
+				"     broadcast: 'auto')~> lookupdimmovietogetMOVIESK",
+				"lookupdimmovietogetMOVIESK, sourcedimcountry join(REGION == COUNTRY_CODE,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joincountry",
+				"joincountry, sourceDimlanguage join(LANGUAGE == LANGUAGE_CODE,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1, sourcebridgetitleakas join(sourcedimcountry@COUNTRY_CODE_SK == sourcebridgetitleakas@COUNTRY_CODE_SK",
+				"     && sourceDimlanguage@ISO_LANGUAGE_SK == sourcebridgetitleakas@ISO_LANGUAGE_SK,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"join2 select(mapColumn(",
+				"          TITLE_AKAS_SK,",
+				"          TITLEID,",
+				"          ORDERING,",
+				"          TITLE,",
+				"          REGION,",
+				"          LANGUAGE,",
+				"          TYPES,",
+				"          ATTRIBUTES,",
+				"          ISORIGINALTITLE,",
+				"          FILENAME,",
+				"          DI_JOB_ID = derivedColumn1@DI_JOB_ID,",
+				"          DI_LOAD_DATE = derivedColumn1@DI_LOAD_DATE,",
+				"          rowcountry,",
+				"          rowiso,",
+				"          MOVIE_SK,",
+				"          TCONST,",
+				"          TITLETYPE,",
+				"          PRIMARYTITLE,",
+				"          ORIGINALTITLE,",
+				"          ISADULT,",
+				"          STARTYEAR,",
+				"          ENDYEAR,",
+				"          RUNTIMEMINUTES,",
+				"          GENRES,",
+				"          DI_JOB_ID = sourceDIMMOVIE@DI_JOB_ID,",
+				"          DI_LOAD_DATE = sourceDIMMOVIE@DI_LOAD_DATE,",
+				"          COUNTRY_CODE_SK = sourcedimcountry@COUNTRY_CODE_SK,",
+				"          COUNTRY_CODE,",
+				"          COUNTRY_NAME,",
+				"          DI_JOB_ID = sourcedimcountry@DI_JOB_ID,",
+				"          DI_LOAD_DATE = sourcedimcountry@DI_LOAD_DATE,",
+				"          ISO_LANGUAGE_SK = sourceDimlanguage@ISO_LANGUAGE_SK,",
+				"          LANGUAGE_CODE,",
+				"          LANGUAGE_NAME,",
+				"          DI_JOB_ID = sourceDimlanguage@DI_JOB_ID,",
+				"          DI_LOAD_DATE = sourceDimlanguage@DI_LOAD_DATE,",
+				"          ENDONYM,",
+				"          BRIDGE_TITLE_AKAS_SK,",
+				"          COUNTRY_CODE_SK = sourcebridgetitleakas@COUNTRY_CODE_SK,",
+				"          ISO_LANGUAGE_SK = sourcebridgetitleakas@ISO_LANGUAGE_SK,",
+				"          DI_JOB_ID = sourcebridgetitleakas@DI_JOB_ID,",
+				"          DI_LOAD_DATE = sourcebridgetitleakas@DI_LOAD_DATE",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select1",
+				"source keyGenerate(output(rowcountry as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeycountry",
+				"surrogateKeycountry keyGenerate(output(rowiso as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DATE = currentTimestamp(),",
+				"          rowcountry = rowcountry,",
+				"          rowiso = rowiso) ~> derivedColumn1"
 			]
 		}
 	}

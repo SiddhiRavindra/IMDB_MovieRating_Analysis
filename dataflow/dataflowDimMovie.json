@@ -80,8 +80,6 @@
 				"     input(",
 				"          MOVIE_SK as decimal(10,0),",
 				"          TCONST as string,",
-				"          START_DATE_ID as date,",
-				"          END_DATE_ID as date,",
 				"          TITLETYPE as string,",
 				"          PRIMARYTITLE as string,",
 				"          ORIGINALTITLE as string,",
