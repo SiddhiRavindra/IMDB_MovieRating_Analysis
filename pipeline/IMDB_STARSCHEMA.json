@@ -239,7 +239,7 @@
 				}
 			},
 			{
-				"name": "BRIDGETOTLEAKAS",
+				"name": "BRIDGETITLEAKAS",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -257,6 +257,32 @@
 						"parameters": {
 							"jobid": "uuid()"
 						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "BRIDGEDATE",
+				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:10:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "bridgeDate",
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
