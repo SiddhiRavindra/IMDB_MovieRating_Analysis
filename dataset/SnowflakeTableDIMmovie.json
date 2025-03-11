@@ -19,14 +19,6 @@
 				"type": "VARCHAR"
 			},
 			{
-				"name": "START_DATE_ID",
-				"type": "DATE"
-			},
-			{
-				"name": "END_DATE_ID",
-				"type": "DATE"
-			},
-			{
 				"name": "TITLETYPE",
 				"type": "VARCHAR"
 			},

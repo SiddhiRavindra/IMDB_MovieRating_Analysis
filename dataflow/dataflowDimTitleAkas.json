@@ -13,58 +13,35 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTableCountryCode",
+						"referenceName": "SnowflakeTableDIMmovie",
 						"type": "DatasetReference"
 					},
-					"name": "sourceDimCountry"
+					"name": "sourceDIMMOVIE"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeBridge",
+						"type": "DatasetReference"
+					},
+					"name": "sourcebridgetitleakas"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeDimCountry",
+						"type": "DatasetReference"
+					},
+					"name": "sourcedimcountry"
 				},
 				{
 					"dataset": {
 						"referenceName": "SnowflakeTable_NewDIMlanguage",
 						"type": "DatasetReference"
 					},
-					"name": "sourceDimLanguage"
-				},
-				{
-					"dataset": {
-						"referenceName": "SnowflakeTableDIMmovie",
-						"type": "DatasetReference"
-					},
-					"name": "sourceDimMovie"
+					"name": "sourceDimlanguage"
 				}
 			],
-			"sinks": [
-				{
-					"dataset": {
-						"referenceName": "SnowflakeTableDIMtitleakas",
-						"type": "DatasetReference"
-					},
-					"name": "sink"
-				}
-			],
-			"transformations": [
-				{
-					"name": "derivedColumn"
-				},
-				{
-					"name": "select"
-				},
-				{
-					"name": "joinCountry"
-				},
-				{
-					"name": "joinMovie"
-				},
-				{
-					"name": "surrogateKey"
-				},
-				{
-					"name": "lookup1"
-				},
-				{
-					"name": "derivedColumncleanlanguage"
-				}
-			],
+			"sinks": [],
+			"transformations": [],
 			"scriptLines": [
 				"parameters{",
 				"     jobid as string (uuid())",
@@ -87,31 +64,8 @@
 				"     validateSchema: false,",
 				"     format: 'table') ~> source",
 				"source(output(",
-				"          COUNTRY_CODE_SK as decimal(38,0),",
-				"          COUNTRY_NAME as string,",
-				"          COUNTRY_CODE as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimCountry",
-				"source(output(",
-				"          ISO_LANGUAGE_SK as decimal(10,0),",
-				"          LANGUAGE_CODE as string,",
-				"          LANGUAGE_NAME as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date,",
-				"          ENDONYM as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimLanguage",
-				"source(output(",
 				"          MOVIE_SK as decimal(10,0),",
 				"          TCONST as string,",
-				"          START_DATE_ID as date,",
-				"          END_DATE_ID as date,",
 				"          TITLETYPE as string,",
 				"          PRIMARYTITLE as string,",
 				"          ORIGINALTITLE as string,",
@@ -125,90 +79,38 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourceDimMovie",
-				"joinMovie derive(DI_JOB_ID = $jobid,",
-				"          DI_LOAD_DATE = currentTimestamp(),",
-				"          RowNum = RowNum,",
-				"          COUNTRY_CODE_SK = COUNTRY_CODE_SK) ~> derivedColumn",
-				"derivedColumn select(mapColumn(",
-				"          TITLE_AKAS_SK,",
-				"          COUNTRY_CODE_SK,",
-				"          MOVIE_SK,",
-				"          ORDERING,",
-				"          TITLE,",
-				"          TYPES,",
-				"          ATTRIBUTES,",
-				"          ISORIGINALTITLE,",
-				"          REGION,",
-				"          TITLEID,",
-				"          LANGUAGE,",
-				"          DI_JOB_ID,",
-				"          DI_LOAD_DATE",
-				"     ),",
-				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> select",
-				"surrogateKey, sourceDimCountry join(REGION == upper(COUNTRY_CODE),",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinCountry",
-				"lookup1, sourceDimMovie join(TITLEID == TCONST,",
-				"     joinType:'left',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinMovie",
-				"source keyGenerate(output(RowNum as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey",
-				"derivedColumncleanlanguage, sourceDimLanguage lookup(LANGUAGE == LANGUAGE_CODE,",
-				"     multiple: false,",
-				"     pickup: 'first',",
-				"     asc(ERROR_FUNCTION(''), true),",
-				"     broadcast: 'auto')~> lookup1",
-				"joinCountry derive(EXTRACTED_LANGUAGE = iif(",
-				"   locate('\u0002', LANGUAGE) > 0,",
-				"   substring(LANGUAGE, 1, locate('\u0002', LANGUAGE) - 1),",
-				"   LANGUAGE",
-				"),",
-				"          CLEANED_LANGUAGE = coalesce(trim(LANGUAGE), 'unk')) ~> derivedColumncleanlanguage",
-				"select sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          TITLE_AKAS_SK as decimal(10,0),",
+				"     format: 'table') ~> sourceDIMMOVIE",
+				"source(output(",
+				"          BRIDGE_TITLE_AKAS_SK as decimal(10,0),",
 				"          COUNTRY_CODE_SK as decimal(10,0),",
 				"          ISO_LANGUAGE_SK as decimal(10,0),",
-				"          MOVIE_SK as decimal(10,0),",
-				"          ORDERING as decimal(38,0),",
-				"          TITLE as string,",
-				"          TYPES as string,",
-				"          ATTRIBUTES as string,",
-				"          ISORIGINALTITLE as string,",
-				"          REGION as string,",
-				"          TITLEID as string,",
-				"          LANGUAGE as string,",
 				"          DI_JOB_ID as string,",
 				"          DI_LOAD_DATE as date",
 				"     ),",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     truncate:true,",
-				"     format: 'table',",
-				"     stageInsert: true,",
-				"     mapColumn(",
-				"          TITLE_AKAS_SK,",
-				"          COUNTRY_CODE_SK,",
-				"          MOVIE_SK,",
-				"          ORDERING,",
-				"          TITLE,",
-				"          TYPES,",
-				"          ATTRIBUTES,",
-				"          REGION,",
-				"          LANGUAGE,",
-				"          DI_JOB_ID,",
-				"          DI_LOAD_DATE",
-				"     )) ~> sink"
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourcebridgetitleakas",
+				"source(output(",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          COUNTRY_CODE as string,",
+				"          COUNTRY_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourcedimcountry",
+				"source(output(",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          LANGUAGE_CODE as string,",
+				"          LANGUAGE_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date,",
+				"          ENDONYM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceDimlanguage"
 			]
 		}
 	}
