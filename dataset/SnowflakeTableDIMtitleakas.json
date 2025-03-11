@@ -15,6 +15,18 @@
 				"scale": 0
 			},
 			{
+				"name": "MOVIE_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "BRIDGE_TITLE_AKAS_SK",
+				"type": "NUMBER",
+				"precision": 10,
+				"scale": 0
+			},
+			{
 				"name": "COUNTRY_CODE_SK",
 				"type": "NUMBER",
 				"precision": 10,
@@ -22,12 +34,6 @@
 			},
 			{
 				"name": "ISO_LANGUAGE_SK",
-				"type": "NUMBER",
-				"precision": 10,
-				"scale": 0
-			},
-			{
-				"name": "MOVIE_SK",
 				"type": "NUMBER",
 				"precision": 10,
 				"scale": 0
