@@ -334,6 +334,8 @@
 			{
 				"name": "DataflowCountryCode",
 				"type": "ExecuteDataFlow",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.00:30:00",
@@ -346,7 +348,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowCountryCode",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,

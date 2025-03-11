@@ -10,13 +10,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "sourceCountry"
-				},
-				{
-					"dataset": {
-						"referenceName": "SnowflakeTable_NewDIMlanguage",
-						"type": "DatasetReference"
-					},
-					"name": "sourceLanguage"
 				}
 			],
 			"sinks": [
@@ -33,10 +26,16 @@
 					"name": "derivedColumn"
 				},
 				{
-					"name": "joinCountryLanguage"
+					"name": "surrogateKey1"
 				},
 				{
-					"name": "surrogateKey1"
+					"name": "surrogateKey2"
+				},
+				{
+					"name": "surrogateKey3"
+				},
+				{
+					"name": "surrogateKey4"
 				}
 			],
 			"scriptLines": [
@@ -53,27 +52,20 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourceCountry",
-				"source(output(",
-				"          ISO_LANGUAGE_SK as decimal(10,0),",
-				"          LANGUAGE_CODE as string,",
-				"          LANGUAGE_NAME as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date,",
-				"          ENDONYM as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourceLanguage",
-				"joinCountryLanguage derive(DI_JOB_ID = $jobid,",
+				"surrogateKey4 derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn",
-				"surrogateKey1, sourceLanguage join(true(),",
-				"     joinType:'cross',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> joinCountryLanguage",
 				"sourceCountry keyGenerate(output(rowNum as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 keyGenerate(output(country as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey2",
+				"surrogateKey2 keyGenerate(output(date as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey3",
+				"surrogateKey3 keyGenerate(output(language as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey4",
 				"derivedColumn sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -91,8 +83,8 @@
 				"     stageInsert: true,",
 				"     mapColumn(",
 				"          BRIDGE_TITLE_AKAS_SK = rowNum,",
-				"          COUNTRY_CODE_SK,",
-				"          ISO_LANGUAGE_SK,",
+				"          COUNTRY_CODE_SK = country,",
+				"          ISO_LANGUAGE_SK = language,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE",
 				"     )) ~> sink"
