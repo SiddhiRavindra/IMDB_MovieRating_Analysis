@@ -26,8 +26,47 @@
 					"name": "sourcetitleprincipalsstage"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeFactMovieDetails",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKeymoviesk"
+				},
+				{
+					"name": "surrogateKeyTITLEAKASSK"
+				},
+				{
+					"name": "surrogateKeycountrycodesk"
+				},
+				{
+					"name": "surrogateKeyiso"
+				},
+				{
+					"name": "surrogateKeyperson"
+				},
+				{
+					"name": "surrogateKeyfactmovie"
+				},
+				{
+					"name": "surrogateKeydatesk"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "join1"
+				}
+			],
 			"scriptLines": [
 				"parameters{",
 				"     jobid as string (uuid())",
@@ -73,7 +112,110 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> sourcetitleprincipalsstage"
+				"     format: 'table') ~> sourcetitleprincipalsstage",
+				"source keyGenerate(output(rowmovie as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeymoviesk",
+				"surrogateKeymoviesk keyGenerate(output(rowakas as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeyTITLEAKASSK",
+				"surrogateKeyTITLEAKASSK keyGenerate(output(rowcountry as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeycountrycodesk",
+				"surrogateKeycountrycodesk keyGenerate(output(rowiso as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeyiso",
+				"surrogateKeyiso keyGenerate(output(rowperson as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeyperson",
+				"surrogateKeyperson keyGenerate(output(rowfactmovie as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeyfactmovie",
+				"surrogateKeyfactmovie keyGenerate(output(rowdatesk as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeydatesk",
+				"join1 derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DATE = currentTimestamp(),",
+				"          rowmovie = rowmovie,",
+				"          rowakas = rowakas,",
+				"          rowcountry = rowcountry,",
+				"          rowiso = rowiso,",
+				"          rowperson = rowperson,",
+				"          rowfactmovie = rowfactmovie,",
+				"          rowdatesk = rowdatesk) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          TITLE_BASICS_SK,",
+				"          TCONST = source@TCONST,",
+				"          TITLETYPE,",
+				"          PRIMARYTITLE,",
+				"          ORIGINALTITLE,",
+				"          ISADULT,",
+				"          STARTYEAR,",
+				"          ENDYEAR,",
+				"          RUNTIMEMINUTES,",
+				"          GENRES,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE,",
+				"          rowmovie,",
+				"          rowakas,",
+				"          rowcountry,",
+				"          rowiso,",
+				"          rowperson,",
+				"          rowfactmovie,",
+				"          rowdatesk,",
+				"          TITLE_RATING_SK,",
+				"          TCONST = sourcetitleratingstage@TCONST,",
+				"          AVERAGERATING,",
+				"          NUMVOTES",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> select1",
+				"surrogateKeydatesk, sourcetitleratingstage join(1==1,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          FACT_MOVIE_SK as decimal(0,0),",
+				"          DATE_SK as decimal(0,0),",
+				"          TITLE_AKAS_SK as decimal(0,0),",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          PERSON_SK as decimal(10,0),",
+				"          MOVIE_SK as decimal(10,0),",
+				"          AVERAGERATING as double,",
+				"          NUMVOTES as binary,",
+				"          CATEGORY as string,",
+				"          JOB as string,",
+				"          CHARACTERS as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          FACT_MOVIE_SK = rowfactmovie,",
+				"          DATE_SK = rowdatesk,",
+				"          TITLE_AKAS_SK = rowakas,",
+				"          COUNTRY_CODE_SK = rowcountry,",
+				"          ISO_LANGUAGE_SK = rowiso,",
+				"          PERSON_SK = rowperson,",
+				"          MOVIE_SK = rowmovie,",
+				"          AVERAGERATING,",
+				"          NUMVOTES,",
+				"          CATEGORY,",
+				"          JOB,",
+				"          CHARACTERS,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE",
+				"     )) ~> sink1"
 			]
 		}
 	}
