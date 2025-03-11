@@ -73,6 +73,12 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "surrogateKeymoviesk"
+				},
+				{
+					"name": "surrogateKeybridgetitleakassk"
 				}
 			],
 			"scriptLines": [
@@ -144,7 +150,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourceDimlanguage",
-				"surrogateKey1, sourceDIMMOVIE lookup(TITLEID == TCONST,",
+				"surrogateKeybridgetitleakassk, sourceDIMMOVIE lookup(TITLEID == TCONST,",
 				"     multiple: false,",
 				"     pickup: 'first',",
 				"     asc(MOVIE_SK, true),",
@@ -177,10 +183,10 @@
 				"          ISORIGINALTITLE,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE,",
-				"          COUNTRY_CODE_SK = rowcountry,",
-				"          ISO_LANGUAGE_SK = rowiso,",
-				"          MOVIE_SK,",
-				"          BRIDGE_TITLE_AKAS_SK",
+				"          rowcountry,",
+				"          rowiso,",
+				"          rowmovie,",
+				"          bridgerow",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> select1",
@@ -193,7 +199,15 @@
 				"join2 derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp(),",
 				"          rowiso = rowiso,",
-				"          rowcountry = rowcountry) ~> derivedColumn1",
+				"          rowcountry = rowcountry,",
+				"          bridgerow = bridgerow,",
+				"          rowmovie = rowmovie) ~> derivedColumn1",
+				"surrogateKey1 keyGenerate(output(rowmovie as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeymoviesk",
+				"surrogateKeymoviesk keyGenerate(output(bridgerow as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeybridgetitleakassk",
 				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -222,10 +236,10 @@
 				"     stageInsert: true,",
 				"     mapColumn(",
 				"          TITLE_AKAS_SK,",
-				"          MOVIE_SK,",
-				"          BRIDGE_TITLE_AKAS_SK,",
-				"          COUNTRY_CODE_SK,",
-				"          ISO_LANGUAGE_SK,",
+				"          MOVIE_SK = rowmovie,",
+				"          BRIDGE_TITLE_AKAS_SK = bridgerow,",
+				"          COUNTRY_CODE_SK = rowcountry,",
+				"          ISO_LANGUAGE_SK = rowiso,",
 				"          ORDERING,",
 				"          TITLE,",
 				"          TYPES,",
