@@ -28,6 +28,10 @@
 			],
 			"sinks": [
 				{
+					"dataset": {
+						"referenceName": "SnowflakeTestFactEpisode",
+						"type": "DatasetReference"
+					},
 					"name": "sink"
 				}
 			],
@@ -99,7 +103,7 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinDimMovie",
-				"joinDimMovie, sourceDimDate join(sourceDimMovie@DI_LOAD_DATE == DATE,",
+				"joinDimMovie, sourceDimDate join(STARTYEAR == YEAR,",
 				"     joinType:'left',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
@@ -108,8 +112,30 @@
 				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn1",
 				"derivedColumn1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink"
+				"     input(",
+				"          FACT_EPISODE_SK as decimal(0,0),",
+				"          DATE_SK as decimal(0,0),",
+				"          MOVIE_SK as decimal(10,0),",
+				"          EPISODENUMBER as decimal(38,0),",
+				"          SEASONNUMBER as decimal(38,0),",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     stageInsert: true,",
+				"     mapColumn(",
+				"          FACT_EPISODE_SK = fact_episode_SK,",
+				"          DATE_SK,",
+				"          MOVIE_SK,",
+				"          EPISODENUMBER,",
+				"          SEASONNUMBER,",
+				"          DI_JOB_ID,",
+				"          DI_LOAD_DATE",
+				"     )) ~> sink"
 			]
 		}
 	}
