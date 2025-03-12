@@ -6,53 +6,36 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "SnowflakeTableTitleBasics",
-						"type": "DatasetReference"
-					},
-					"name": "sourcetitlebasicsstage"
-				},
-				{
-					"dataset": {
 						"referenceName": "SnowflakeTableStageTitleAkas",
 						"type": "DatasetReference"
 					},
-					"name": "source2titleakasstage"
+					"name": "source1titleakas"
 				},
 				{
 					"dataset": {
 						"referenceName": "SnowflakeTableTitlePrincipals",
 						"type": "DatasetReference"
 					},
-					"name": "source3titleprincipalsstage"
+					"name": "source2titleprin"
 				},
 				{
 					"dataset": {
 						"referenceName": "SnowflakeTable_IMDB",
 						"type": "DatasetReference"
 					},
-					"name": "source4titleratingstage"
+					"name": "source3titlerating"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableTitleBasics",
+						"type": "DatasetReference"
+					},
+					"name": "source4titlebasicsstage"
 				}
 			],
 			"sinks": [],
 			"transformations": [],
 			"scriptLines": [
-				"source(output(",
-				"          TITLE_BASICS_SK as decimal(38,0),",
-				"          TCONST as string,",
-				"          TITLETYPE as string,",
-				"          PRIMARYTITLE as string,",
-				"          ORIGINALTITLE as string,",
-				"          ISADULT as decimal(10,0),",
-				"          STARTYEAR as decimal(38,0),",
-				"          ENDYEAR as decimal(38,0),",
-				"          RUNTIMEMINUTES as decimal(38,0),",
-				"          GENRES as string,",
-				"          DI_JOB_ID as string,",
-				"          DI_LOAD_DATE as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     format: 'table') ~> sourcetitlebasicsstage",
 				"source(output(",
 				"          TITLE_AKAS_SK as decimal(38,0),",
 				"          TITLEID as string,",
@@ -69,7 +52,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> source2titleakasstage",
+				"     format: 'table') ~> source1titleakas",
 				"source(output(",
 				"          TITLE_PRINCIPALS_SK as decimal(38,0),",
 				"          TCONST as string,",
@@ -83,7 +66,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> source3titleprincipalsstage",
+				"     format: 'table') ~> source2titleprin",
 				"source(output(",
 				"          TITLE_RATING_SK as decimal(38,0),",
 				"          TCONST as string,",
@@ -94,7 +77,24 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> source4titleratingstage"
+				"     format: 'table') ~> source3titlerating",
+				"source(output(",
+				"          TITLE_BASICS_SK as decimal(38,0),",
+				"          TCONST as string,",
+				"          TITLETYPE as string,",
+				"          PRIMARYTITLE as string,",
+				"          ORIGINALTITLE as string,",
+				"          ISADULT as decimal(10,0),",
+				"          STARTYEAR as decimal(38,0),",
+				"          ENDYEAR as decimal(38,0),",
+				"          RUNTIMEMINUTES as decimal(38,0),",
+				"          GENRES as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> source4titlebasicsstage"
 			]
 		}
 	}
