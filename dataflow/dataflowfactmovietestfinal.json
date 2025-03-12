@@ -24,6 +24,27 @@
 						"type": "DatasetReference"
 					},
 					"name": "sourcetitleprincipalsstage"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableDIMDate",
+						"type": "DatasetReference"
+					},
+					"name": "sourcedimdate"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableDIMtitleakas",
+						"type": "DatasetReference"
+					},
+					"name": "sourcedimtitleakas"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeDimPerson",
+						"type": "DatasetReference"
+					},
+					"name": "sourcedimperson"
 				}
 			],
 			"sinks": [
@@ -37,25 +58,7 @@
 			],
 			"transformations": [
 				{
-					"name": "surrogateKeymoviesk"
-				},
-				{
-					"name": "surrogateKeyTITLEAKASSK"
-				},
-				{
-					"name": "surrogateKeycountrycodesk"
-				},
-				{
-					"name": "surrogateKeyiso"
-				},
-				{
-					"name": "surrogateKeyperson"
-				},
-				{
 					"name": "surrogateKeyfactmovie"
-				},
-				{
-					"name": "surrogateKeydatesk"
 				},
 				{
 					"name": "derivedColumn1"
@@ -64,13 +67,16 @@
 					"name": "select1"
 				},
 				{
-					"name": "join1"
-				},
-				{
-					"name": "join2"
-				},
-				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "lookup2"
+				},
+				{
+					"name": "lookup3"
 				}
 			],
 			"scriptLines": [
@@ -119,28 +125,55 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourcetitleprincipalsstage",
-				"source keyGenerate(output(rowmovie as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKeymoviesk",
-				"surrogateKeymoviesk keyGenerate(output(rowakas as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKeyTITLEAKASSK",
-				"surrogateKeyTITLEAKASSK keyGenerate(output(rowcountry as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKeycountrycodesk",
-				"surrogateKeycountrycodesk keyGenerate(output(rowiso as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKeyiso",
-				"surrogateKeyiso keyGenerate(output(rowperson as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKeyperson",
-				"surrogateKeyperson keyGenerate(output(rowfactmovie as long),",
+				"source(output(",
+				"          DATE_SK as decimal(0,0),",
+				"          DATE as date,",
+				"          YEAR as decimal(38,0),",
+				"          MONTH as decimal(38,0),",
+				"          DAY_OF_WEEK as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourcedimdate",
+				"source(output(",
+				"          TITLE_AKAS_SK as decimal(10,0),",
+				"          MOVIE_SK as decimal(10,0),",
+				"          BRIDGE_TITLE_AKAS_SK as decimal(10,0),",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          ORDERING as decimal(38,0),",
+				"          TITLE as string,",
+				"          TYPES as string,",
+				"          ATTRIBUTES as string,",
+				"          ISORIGINALTITLE as string,",
+				"          REGION as string,",
+				"          TITLEID as string,",
+				"          LANGUAGE as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourcedimtitleakas",
+				"source(output(",
+				"          PERSON_SK as decimal(10,0),",
+				"          NCONST as string,",
+				"          BIRTHYEAR as decimal(38,0),",
+				"          DEATHYEAR as decimal(38,0),",
+				"          PRIMARYPROFESSION as string,",
+				"          PRIMARYNAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourcedimperson",
+				"source keyGenerate(output(rowfactmovie as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKeyfactmovie",
-				"surrogateKeyfactmovie keyGenerate(output(rowdatesk as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKeydatesk",
-				"join2 derive(DI_JOB_ID = $jobid,",
+				"lookup3 derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp(),",
 				"          rowmovie = rowmovie,",
 				"          rowakas = rowakas,",
@@ -172,16 +205,6 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> select1",
-				"surrogateKeydatesk, sourcetitleratingstage join(source@TCONST == sourcetitleratingstage@TCONST,",
-				"     joinType:'outer',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1",
-				"join1, sourcetitleprincipalsstage join(source@TCONST == NCONST,",
-				"     joinType:'outer',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join2",
 				"select1 derive(FACT_MOVIE_SK = iif(isNull(toInteger(FACT_MOVIE_SK)), -1, toInteger(FACT_MOVIE_SK)),",
 				"          DATE_SK = iif(isNull(toInteger(DATE_SK)), -1, toInteger(DATE_SK)),",
 				"          TITLE_AKAS_SK = iif(isNull(toInteger(TITLE_AKAS_SK)), -1, toInteger(TITLE_AKAS_SK)),",
@@ -189,6 +212,18 @@
 				"          ISO_LANGUAGE_SK = iif(isNull(toInteger(ISO_LANGUAGE_SK)), -1, toInteger(ISO_LANGUAGE_SK)),",
 				"          PERSON_SK = iif(isNull(toInteger(PERSON_SK)), -1, toInteger(PERSON_SK)),",
 				"          MOVIE_SK = iif(isNull(toInteger(MOVIE_SK)), -1, toInteger(MOVIE_SK))) ~> derivedColumn2",
+				"surrogateKeyfactmovie, sourcedimtitleakas lookup(TCONST == TITLEID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"lookup1, sourcedimperson lookup(TCONST == NCONST,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup2",
+				"lookup2, sourcedimdate lookup(STARTYEAR == YEAR,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup3",
 				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
