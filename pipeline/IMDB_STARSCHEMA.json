@@ -282,7 +282,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "bridgeDate",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,

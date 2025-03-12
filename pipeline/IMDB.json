@@ -322,7 +322,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflowIsoLangStage",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"jobid": "uuid()"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
