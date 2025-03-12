@@ -1,0 +1,90 @@
+{
+	"name": "title_Akas_df",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTableStageTitleAkas",
+						"type": "DatasetReference"
+					},
+					"name": "source"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeDimCountry",
+						"type": "DatasetReference"
+					},
+					"name": "sourcecountry"
+				},
+				{
+					"dataset": {
+						"referenceName": "SnowflakeTable_NewDIMlanguage",
+						"type": "DatasetReference"
+					},
+					"name": "sourceLanguage"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "join2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TITLE_AKAS_SK as decimal(38,0),",
+				"          TITLEID as string,",
+				"          ORDERING as decimal(38,0),",
+				"          TITLE as string,",
+				"          REGION as string,",
+				"          LANGUAGE as string,",
+				"          TYPES as string,",
+				"          ATTRIBUTES as string,",
+				"          ISORIGINALTITLE as decimal(38,0),",
+				"          FILENAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> source",
+				"source(output(",
+				"          COUNTRY_CODE_SK as decimal(10,0),",
+				"          COUNTRY_CODE as string,",
+				"          COUNTRY_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourcecountry",
+				"source(output(",
+				"          ISO_LANGUAGE_SK as decimal(10,0),",
+				"          LANGUAGE_CODE as string,",
+				"          LANGUAGE_NAME as string,",
+				"          DI_JOB_ID as string,",
+				"          DI_LOAD_DATE as date,",
+				"          ENDONYM as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'table') ~> sourceLanguage",
+				"source, sourcecountry join(REGION == COUNTRY_NAME,",
+				"     joinType:'right',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1, sourceLanguage join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     joinType:'right',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2"
+			]
+		}
+	}
+}
