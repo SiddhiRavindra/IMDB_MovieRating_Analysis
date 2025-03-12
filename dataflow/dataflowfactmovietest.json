@@ -34,11 +34,7 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [
-				{
-					"name": "lookup1"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
 				"source(output(",
 				"          TITLE_BASICS_SK as decimal(38,0),",
@@ -98,11 +94,7 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'table') ~> source4titleratingstage",
-				"sourcetitlebasicsstage lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
-				"     multiple: false,",
-				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1"
+				"     format: 'table') ~> source4titleratingstage"
 			]
 		}
 	}
