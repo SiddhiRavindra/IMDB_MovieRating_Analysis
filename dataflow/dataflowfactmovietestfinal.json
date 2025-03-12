@@ -70,13 +70,13 @@
 					"name": "derivedColumn2"
 				},
 				{
-					"name": "lookup1"
+					"name": "lookuptitleakas"
 				},
 				{
-					"name": "lookup2"
+					"name": "lookupperson"
 				},
 				{
-					"name": "lookup3"
+					"name": "lookupdate"
 				}
 			],
 			"scriptLines": [
@@ -173,7 +173,7 @@
 				"source keyGenerate(output(rowfactmovie as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKeyfactmovie",
-				"lookup3 derive(DI_JOB_ID = $jobid,",
+				"lookupdate derive(DI_JOB_ID = $jobid,",
 				"          DI_LOAD_DATE = currentTimestamp(),",
 				"          rowmovie = rowmovie,",
 				"          rowakas = rowakas,",
@@ -215,15 +215,15 @@
 				"surrogateKeyfactmovie, sourcedimtitleakas lookup(TCONST == TITLEID,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1",
-				"lookup1, sourcedimperson lookup(TCONST == NCONST,",
+				"     broadcast: 'auto')~> lookuptitleakas",
+				"lookuptitleakas, sourcedimperson lookup(TCONST == NCONST,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup2",
-				"lookup2, sourcedimdate lookup(STARTYEAR == YEAR,",
+				"     broadcast: 'auto')~> lookupperson",
+				"lookupperson, sourcedimdate lookup(STARTYEAR == YEAR,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup3",
+				"     broadcast: 'auto')~> lookupdate",
 				"derivedColumn2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
