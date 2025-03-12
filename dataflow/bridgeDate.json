@@ -23,9 +23,6 @@
 			],
 			"transformations": [
 				{
-					"name": "surrogateKey"
-				},
-				{
 					"name": "derivedColumn"
 				},
 				{
@@ -33,6 +30,9 @@
 				},
 				{
 					"name": "surrogateKey1"
+				},
+				{
+					"name": "surrogateKey2"
 				}
 			],
 			"scriptLines": [
@@ -51,22 +51,24 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'table') ~> sourceDate",
-				"surrogateKey1 keyGenerate(output(rowNum as long),",
-				"     startAt: 1L,",
-				"     stepValue: 1L) ~> surrogateKey",
-				"surrogateKey derive(DI_JOB_ID = $jobid,",
-				"          DI_LOAD_DATE = currentTimestamp()) ~> derivedColumn",
+				"surrogateKey2 derive(DI_JOB_ID = $jobid,",
+				"          DI_LOAD_DATE = currentTimestamp(),",
+				"          DATE_SK = datesk,",
+				"          Bridge_date_sk = RowNum) ~> derivedColumn",
 				"derivedColumn select(mapColumn(",
-				"          DATE_SK = dateSK,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE,",
-				"          rowNum",
+				"          RowNum,",
+				"          datesk",
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: false) ~> select",
-				"sourceDate keyGenerate(output(dateSK as long),",
+				"sourceDate keyGenerate(output(RowNum as long),",
 				"     startAt: 1L,",
 				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 keyGenerate(output(datesk as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey2",
 				"select sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -83,8 +85,8 @@
 				"     format: 'table',",
 				"     stageInsert: true,",
 				"     mapColumn(",
-				"          BRIDGE_DATE_SK = rowNum,",
-				"          DATE_SK,",
+				"          BRIDGE_DATE_SK = RowNum,",
+				"          DATE_SK = datesk,",
 				"          DI_JOB_ID,",
 				"          DI_LOAD_DATE",
 				"     )) ~> sink"
