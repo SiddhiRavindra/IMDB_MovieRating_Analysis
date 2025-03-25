@@ -2,7 +2,7 @@
 	"name": "IMDBDataLakeStorage",
 	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
-		"description": "DataLake Storage for IMDB ",
+		"description": "DataLake Storga efor IMDB ",
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
